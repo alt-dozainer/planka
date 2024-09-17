@@ -13,14 +13,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: 'npm'
-    - working-directory: ./client
-    - run: npm i
-    - run: npm run build
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: install deps
+        working-directory: ./client
+        run: npm i
+      - name: build client
+        working-directory: ./client
+        run: npm run build
   publish:
     needs: build
     runs-on: ubuntu-latest
