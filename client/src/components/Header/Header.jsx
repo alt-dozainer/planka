@@ -6,7 +6,7 @@ import { Button, Icon, Menu } from 'semantic-ui-react';
 import { usePopup } from '../../lib/popup';
 
 import Paths from '../../constants/Paths';
-import Config from '../../constants/Config';
+// import Config from '../../constants/Config';
 import NotificationsStep from './NotificationsStep';
 import User from '../User';
 import UserStep from '../UserStep';
@@ -17,7 +17,7 @@ const POPUP_PROPS = {
   position: 'bottom right',
 };
 
-const { APP_NAME } = Config;
+// const { APP_NAME } = Config;
 
 const Header = React.memo(
   ({
