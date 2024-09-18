@@ -49,4 +49,8 @@ jobs:
         pass: ${{ secrets.PASSWORD }}
         scp: |
           './client/build/static/*' => /var/www/planka/public/static/
-          './client/build/static/index.html' => /var/www/planka/views/index.ejs
+          './client/build/static/index*.html' => /var/www/planka/views/
+        last_ssh: |
+          cd /var/www/planka/views/
+          cp index.html index.ejs
+          
