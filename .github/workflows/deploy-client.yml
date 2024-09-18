@@ -47,10 +47,15 @@ jobs:
         host: ${{ secrets.HOST }}
         user: ${{ secrets.USERNAME }}
         pass: ${{ secrets.PASSWORD }}
+        first_ssh: |
+          rm -rf /var/www/planka/public/static/js
+          rm -rf /var/www/planka/plublc/static/css
         scp: |
           './client/build/static/*' => /var/www/planka/public/static/
           './client/build/index*.html' => /var/www/planka/views/
         last_ssh: |
           cd /var/www/planka/views/
           cp index.html index.ejs
+          rm index.html
+          sudo yunohost service restart planka
           
