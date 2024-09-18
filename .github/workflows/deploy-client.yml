@@ -22,8 +22,8 @@ jobs:
         working-directory: ./client
         run: npm i
       - name: build client
-        working-directory: ./client
-        run: npm run build
+        working-directory: ./
+        run: npm run client:build
   publish:
     needs: build
     runs-on: ubuntu-latest
