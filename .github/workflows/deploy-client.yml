@@ -19,6 +19,9 @@ jobs:
           node-version: 20
           cache: 'npm'
       - name: install deps
+        working-directory: ./
+        run: npm i
+      - name: install client deps
         working-directory: ./client
         run: npm i
       - name: build client
