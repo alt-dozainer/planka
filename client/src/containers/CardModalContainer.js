@@ -9,6 +9,8 @@ import Paths from '../constants/Paths';
 import { BoardMembershipRoles } from '../constants/Enums';
 import CardModal from '../components/CardModal';
 
+import socket from '../api/socket';
+
 const mapStateToProps = (state) => {
   const { projectId } = selectors.selectPath(state);
   const allProjectsToLists = selectors.selectProjectsToListsForCurrentUser(state);
@@ -16,6 +18,15 @@ const mapStateToProps = (state) => {
   const allBoardMemberships = selectors.selectMembershipsForCurrentBoard(state);
   const allLabels = selectors.selectLabelsForCurrentBoard(state);
   const currentUserMembership = selectors.selectCurrentUserMembershipForCurrentBoard(state);
+  const selectListById = (name) => selectors.selectListByNameForCurrentBoard(state, name);
+  const selectBoardByName = (name) => selectors.selectBoardByName(state, name);
+  const selectCardsFromBoardByName = (name) => selectors.selectCardsFromBoardByName(state, name);
+
+  const accessToken = selectors.selectAccessToken(state);
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+  };
+  const fetchBoard = (id) => socket.get(`/boards/${id}`, undefined, headers);
 
   const {
     name,
@@ -71,6 +82,10 @@ const mapStateToProps = (state) => {
     canEdit: isCurrentUserEditor,
     canEditCommentActivities: isCurrentUserEditorOrCanComment,
     canEditAllCommentActivities: isCurrentUserManager,
+    getListByName: selectListById,
+    getBoardByName: selectBoardByName,
+    getCardsFromBoardByName: selectCardsFromBoardByName,
+    fetchBoard,
   };
 };
 
@@ -111,7 +126,10 @@ const mapDispatchToProps = (dispatch) =>
 const mergeProps = (stateProps, dispatchProps) => ({
   ...stateProps,
   ...omit(dispatchProps, 'push'),
-  onClose: () => dispatchProps.push(Paths.BOARDS.replace(':id', stateProps.boardId)),
+  onClose: () => {
+    const view = window.location.search.indexOf('v=events') >= 0 ? `?v=events` : ``;
+    return dispatchProps.push(Paths.BOARDS.replace(':id', `${stateProps.boardId}${view}`));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(CardModal);

@@ -10,6 +10,9 @@ const mapStateToProps = (state) => {
   const { cardId } = selectors.selectPath(state);
   const currentUserMembership = selectors.selectCurrentUserMembershipForCurrentBoard(state);
   const listIds = selectors.selectListIdsForCurrentBoard(state);
+  const events = selectors.selectAllCardsForCurrentBoard(state);
+  const selectListById = (name) => selectors.selectListByNameForCurrentBoard(state, name);
+  const selectBoardByName = (name) => selectors.selectBoardByName(state, name);
 
   const isCurrentUserEditor =
     !!currentUserMembership && currentUserMembership.role === BoardMembershipRoles.EDITOR;
@@ -18,6 +21,9 @@ const mapStateToProps = (state) => {
     listIds,
     isCardModalOpened: !!cardId,
     canEdit: isCurrentUserEditor,
+    events,
+    getListByName: selectListById,
+    getBoardByName: selectBoardByName,
   };
 };
 
@@ -27,6 +33,8 @@ const mapDispatchToProps = (dispatch) =>
       onListCreate: entryActions.createListInCurrentBoard,
       onListMove: entryActions.moveList,
       onCardMove: entryActions.moveCard,
+      onCardCreate: (listId, data, autoOpen) => entryActions.createCard(listId, data, autoOpen),
+      onCardUpdate: (cardId, data) => entryActions.updateCard(cardId, data),
     },
     dispatch,
   );

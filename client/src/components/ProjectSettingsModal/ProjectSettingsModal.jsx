@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Modal, Tab } from 'semantic-ui-react';
-
+import { ProjectBackgroundTypes } from '../../constants/Enums';
 import ManagersPane from './ManagersPane';
 import BackgroundPane from './BackgroundPane';
 import GeneralPane from './GeneralPane';
@@ -66,7 +66,12 @@ const ProjectSettingsModal = React.memo(
         render: () => (
           <BackgroundPane
             item={background}
-            imageCoverUrl={backgroundImage && backgroundImage.coverUrl}
+            imageCoverUrl={
+              backgroundImage &&
+              (background.type !== ProjectBackgroundTypes.GRADIENT
+                ? backgroundImage.coverUrl
+                : backgroundImage.url)
+            }
             isImageUpdating={isBackgroundImageUpdating}
             onUpdate={handleBackgroundUpdate}
             onImageUpdate={onBackgroundImageUpdate}

@@ -1,5 +1,5 @@
 import isEmail from 'validator/lib/isEmail';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,7 @@ import { useForm } from '../../hooks';
 import { isUsername } from '../../utils/validator';
 
 import styles from './Login.module.scss';
+import globalStyles from '../../styles.module.scss';
 
 const createMessage = (error) => {
   if (!error) {
@@ -76,6 +77,8 @@ const Login = React.memo(
     const [t] = useTranslation();
     const wasSubmitting = usePrevious(isSubmitting);
 
+    const [title, setTitle] = useState();
+
     const [data, handleFieldChange, setData] = useForm(() => ({
       emailOrUsername: '',
       password: '',
@@ -137,8 +140,18 @@ const Login = React.memo(
       passwordField.current.focus();
     }, [focusPasswordFieldState]);
 
+    const noClient = () => {
+      setTitle(t('common.logInToPlanka'));
+    };
+
     return (
-      <div className={classNames(styles.wrapper, styles.fullHeight)}>
+      <div
+        className={classNames(
+          styles.wrapper,
+          styles.fullHeight,
+          globalStyles.backgroundSkyChange, // bg
+        )}
+      >
         <Grid verticalAlign="middle" className={styles.fullHeightPaddingFix}>
           <Grid.Column widescreen={4} largeScreen={5} computer={6} tablet={16} mobile={16}>
             <Grid verticalAlign="middle" className={styles.fullHeightPaddingFix}>
@@ -147,7 +160,17 @@ const Login = React.memo(
                   <Header
                     as="h1"
                     textAlign="center"
-                    content={t('common.logInToPlanka')}
+                    content={
+                      <>
+                        <img
+                          style={{ width: 'auto', maxWidth: '6em' }}
+                          src={`/clients/${window.location.hostname}.png`}
+                          alt=""
+                          onError={noClient}
+                        />
+                        {title}
+                      </>
+                    }
                     className={styles.formTitle}
                   />
                   <div>

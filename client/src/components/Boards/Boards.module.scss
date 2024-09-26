@@ -70,17 +70,29 @@
   .tabWrapper {
     display: flex;
     flex: 0 0 auto;
+    border-radius: 6px 6px 0 0;
+    overflow: hidden;
+
+    &.tabHide {
+      display: none;
+    }
+    &.tabFloatRight {
+      float: right;
+    }
+    &.tabFloatLeft {
+      float: left;
+    }
   }
 
   .tabs {
-    display: flex;
+    // display: flex;
     height: 38px;
     flex: 0 0 auto;
     white-space: nowrap;
   }
 
   .tabsWrapper {
-    display: flex;
+    // display: flex;
     flex: 0 0 auto;
     height: 56px;
     overflow-x: auto;

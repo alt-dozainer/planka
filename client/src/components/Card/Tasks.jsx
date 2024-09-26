@@ -9,7 +9,7 @@ import Linkify from '../Linkify';
 import styles from './Tasks.module.scss';
 
 const Tasks = React.memo(({ items }) => {
-  const [isOpened, toggleOpened] = useToggle();
+  const [isOpened, toggleOpened] = useToggle(true);
 
   const handleToggleClick = useCallback(
     (event) => {

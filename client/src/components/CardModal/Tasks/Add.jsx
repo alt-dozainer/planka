@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import TextareaAutosize from 'react-textarea-autosize';
-import { Button, Form, TextArea } from 'semantic-ui-react';
+// import TextareaAutosize from 'react-textarea-autosize';
+import { Button, Form, Dropdown } from 'semantic-ui-react';
 import { useDidUpdate, useToggle } from '../../../lib/hooks';
 
 import { useClosableForm, useForm } from '../../../hooks';
@@ -13,7 +13,7 @@ const DEFAULT_DATA = {
   name: '',
 };
 
-const Add = React.forwardRef(({ children, onCreate }, ref) => {
+const Add = React.forwardRef(({ children, onCreate, options, optionsId }, ref) => {
   const [t] = useTranslation();
   const [isOpened, setIsOpened] = useState(false);
   const [data, handleFieldChange, setData] = useForm(DEFAULT_DATA);
@@ -36,7 +36,7 @@ const Add = React.forwardRef(({ children, onCreate }, ref) => {
     };
 
     if (!cleanData.name) {
-      nameField.current.ref.current.select();
+      // nameField.current.ref.current.select();
       return;
     }
 
@@ -59,16 +59,16 @@ const Add = React.forwardRef(({ children, onCreate }, ref) => {
     open();
   }, [open]);
 
-  const handleFieldKeyDown = useCallback(
-    (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
+  // const handleFieldKeyDown = useCallback(
+  //   (event) => {
+  //     if (event.key === 'Enter') {
+  //       event.preventDefault();
 
-        submit();
-      }
-    },
-    [submit],
-  );
+  //       submit();
+  //     }
+  //   },
+  //   [submit],
+  // );
 
   const [handleFieldBlur, handleControlMouseOver, handleControlMouseOut] = useClosableForm(
     close,
@@ -81,12 +81,12 @@ const Add = React.forwardRef(({ children, onCreate }, ref) => {
 
   useEffect(() => {
     if (isOpened) {
-      nameField.current.ref.current.focus();
+      // nameField.current.ref.current.focus();
     }
   }, [isOpened]);
 
   useDidUpdate(() => {
-    nameField.current.ref.current.focus();
+    // nameField.current.ref.current.focus();
   }, [focusNameFieldState]);
 
   if (!isOpened) {
@@ -95,9 +95,13 @@ const Add = React.forwardRef(({ children, onCreate }, ref) => {
     });
   }
 
+  if (optionsId) {
+    //
+  }
+
   return (
     <Form className={styles.wrapper} onSubmit={handleSubmit}>
-      <TextArea
+      {/* <TextArea
         ref={nameField}
         as={TextareaAutosize}
         name="name"
@@ -109,7 +113,24 @@ const Add = React.forwardRef(({ children, onCreate }, ref) => {
         onKeyDown={handleFieldKeyDown}
         onChange={handleFieldChange}
         onBlur={handleFieldBlur}
+      /> */}
+      <Dropdown
+        ref={nameField}
+        value={data.value}
+        placeholder={t('common.enterTaskDescription')}
+        // className={styles.field}
+        // onKeyDown={handleFieldKeyDown}
+        onChange={(e, o) =>
+          handleFieldChange(e, {
+            name: 'name',
+            value: o.options.find((i) => i.value === o.value)?.text,
+          })
+        }
+        onBlur={handleFieldBlur}
+        search
+        options={options}
       />
+
       <div className={styles.controls}>
         {/* eslint-disable-next-line jsx-a11y/mouse-events-have-key-events */}
         <Button
@@ -126,6 +147,12 @@ const Add = React.forwardRef(({ children, onCreate }, ref) => {
 Add.propTypes = {
   children: PropTypes.element.isRequired,
   onCreate: PropTypes.func.isRequired,
+  options: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+  optionsId: PropTypes.string,
+};
+
+Add.defaultProps = {
+  optionsId: undefined,
 };
 
 export default React.memo(Add);

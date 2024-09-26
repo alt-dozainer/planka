@@ -11,94 +11,114 @@ import Add from './Add';
 
 import styles from './Tasks.module.scss';
 
-const Tasks = React.memo(({ items, canEdit, onCreate, onUpdate, onMove, onDelete }) => {
-  const [t] = useTranslation();
+const Tasks = React.memo(
+  ({ items, canEdit, onCreate, onUpdate, onMove, onDelete, options, optionsId }) => {
+    const [t] = useTranslation();
 
-  const handleDragStart = useCallback(() => {
-    closePopup();
-  }, []);
+    const handleDragStart = useCallback(() => {
+      closePopup();
+    }, []);
 
-  const handleDragEnd = useCallback(
-    ({ draggableId, source, destination }) => {
-      if (!destination || source.index === destination.index) {
-        return;
-      }
+    const handleDragEnd = useCallback(
+      ({ draggableId, source, destination }) => {
+        if (!destination || source.index === destination.index) {
+          return;
+        }
 
-      onMove(draggableId, destination.index);
-    },
-    [onMove],
-  );
+        onMove(draggableId, destination.index);
+      },
+      [onMove],
+    );
 
-  const handleUpdate = useCallback(
-    (id, data) => {
-      onUpdate(id, data);
-    },
-    [onUpdate],
-  );
+    const handleUpdate = useCallback(
+      (id, data) => {
+        onUpdate(id, data);
+      },
+      [onUpdate],
+    );
 
-  const handleDelete = useCallback(
-    (id) => {
-      onDelete(id);
-    },
-    [onDelete],
-  );
+    const handleDelete = useCallback(
+      (id) => {
+        onDelete(id);
+      },
+      [onDelete],
+    );
 
-  const completedItems = items.filter((item) => item.isCompleted);
+    const completedItems = items.filter((item) => item.isCompleted);
 
-  return (
-    <>
-      {items.length > 0 && (
-        <>
-          <span className={styles.progressWrapper}>
-            <Progress
-              autoSuccess
-              value={completedItems.length}
-              total={items.length}
-              color="blue"
-              size="tiny"
-              className={styles.progress}
-            />
-          </span>
-          <span className={styles.count}>
-            {completedItems.length}/{items.length}
-          </span>
-        </>
-      )}
-      <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <Droppable droppableId="tasks" type={DroppableTypes.TASK}>
-          {({ innerRef, droppableProps, placeholder }) => (
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            <div {...droppableProps} ref={innerRef}>
-              {items.map((item, index) => (
-                <Item
-                  key={item.id}
-                  id={item.id}
-                  index={index}
-                  name={item.name}
-                  isCompleted={item.isCompleted}
-                  isPersisted={item.isPersisted}
-                  canEdit={canEdit}
-                  onUpdate={(data) => handleUpdate(item.id, data)}
-                  onDelete={() => handleDelete(item.id)}
-                />
-              ))}
-              {placeholder}
-              {canEdit && (
-                <Add onCreate={onCreate}>
-                  <button type="button" className={styles.taskButton}>
-                    <span className={styles.taskButtonText}>
-                      {items.length > 0 ? t('action.addAnotherTask') : t('action.addTask')}
-                    </span>
-                  </button>
-                </Add>
-              )}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-    </>
-  );
-});
+    const getDescriptionForItem = (item) => {
+      return (
+        options.find((option) => option.text === item.name)?.description ||
+        item.name.split('[')?.[1]?.split(']')?.[0]
+      );
+    };
+
+    const getTotal = items.reduce((i, s) => {
+      const sum = getDescriptionForItem(s);
+      return i + parseInt(sum || 0, 10);
+    }, 0);
+
+    return (
+      <>
+        {items.length > 0 && (
+          <>
+            <span className={styles.progressWrapper}>
+              <Progress
+                autoSuccess
+                value={completedItems.length}
+                total={items.length}
+                color="blue"
+                size="tiny"
+                className={styles.progress}
+              />
+            </span>
+            <span className={styles.count}>
+              {completedItems.length}/{items.length}
+            </span>
+          </>
+        )}
+        <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+          <Droppable droppableId="tasks" type={DroppableTypes.TASK}>
+            {({ innerRef, droppableProps, placeholder }) => (
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              <div {...droppableProps} ref={innerRef}>
+                {items.map((item, index) => (
+                  <Item
+                    description={getDescriptionForItem(item)}
+                    key={item.id}
+                    id={item.id}
+                    index={index}
+                    name={item.name}
+                    isCompleted={item.isCompleted}
+                    isPersisted={item.isPersisted}
+                    canEdit={canEdit}
+                    onUpdate={(data) => handleUpdate(item.id, data)}
+                    onDelete={() => handleDelete(item.id)}
+                    options={options}
+                    optionsId={optionsId}
+                  />
+                ))}
+                <span className="tasks-footer">
+                  {t('total')} <span className="total-value">{getTotal}</span>
+                </span>
+                {placeholder}
+                {canEdit && (
+                  <Add onCreate={onCreate} options={options} optionsId={optionsId}>
+                    <button type="button" className={styles.taskButton}>
+                      <span className={styles.taskButtonText}>
+                        {items.length > 0 ? t('action.addAnotherTask') : t('action.addTask')}
+                      </span>
+                    </button>
+                  </Add>
+                )}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </>
+    );
+  },
+);
 
 Tasks.propTypes = {
   items: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
@@ -107,6 +127,12 @@ Tasks.propTypes = {
   onUpdate: PropTypes.func.isRequired,
   onMove: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+  options: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+  optionsId: PropTypes.string,
+};
+
+Tasks.defaultProps = {
+  optionsId: undefined,
 };
 
 export default Tasks;

@@ -40,6 +40,27 @@ export const selectCurrentBoard = createSelector(
   },
 );
 
+export const selectAllCardsForCurrentBoard = createSelector(
+  orm,
+  (state) => selectPath(state).boardId,
+  ({ Board, List }, id) => {
+    if (!id) {
+      return id;
+    }
+
+    const boardModel = Board.withId(id);
+
+    if (!boardModel) {
+      return boardModel;
+    }
+
+    return boardModel.cards.toRefArray().map((card) => ({
+      ...card,
+      listName: List.withId(card.listId).ref.name,
+    }));
+  },
+);
+
 export const selectMembershipsForCurrentBoard = createSelector(
   orm,
   (state) => selectPath(state).boardId,
@@ -196,6 +217,50 @@ export const selectIsBoardWithIdExists = createSelector(
   ({ Board }, id) => Board.idExists(id),
 );
 
+//
+export const selectBoardByName = createSelector(
+  orm,
+  (_, name) => name,
+  ({ Board }, name) => {
+    const boardModel = Board.get({ name });
+    if (!boardModel) {
+      return boardModel;
+    }
+
+    return {
+      ...boardModel.ref,
+    };
+  },
+);
+
+export const selectCardsFromBoardByName = createSelector(
+  orm,
+  (_, name) => name,
+  ({ Board }, name) => {
+    const boardModel = Board.get({ name });
+    if (!boardModel) {
+      return boardModel;
+    }
+
+    return boardModel.cards.toRefArray();
+  },
+);
+
+export const selectListByNameForCurrentBoard = createSelector(
+  orm,
+  (_, name) => name,
+  ({ List }, name) => {
+    const listModel = List.get({ name });
+    if (!listModel) {
+      return listModel;
+    }
+
+    return {
+      ...listModel.ref,
+    };
+  },
+);
+
 export default {
   makeSelectBoardById,
   selectBoardById,
@@ -208,4 +273,8 @@ export default {
   selectFilterLabelsForCurrentBoard,
   selectFilterTextForCurrentBoard,
   selectIsBoardWithIdExists,
+  selectBoardByName,
+  selectListByNameForCurrentBoard,
+  selectAllCardsForCurrentBoard,
+  selectCardsFromBoardByName,
 };

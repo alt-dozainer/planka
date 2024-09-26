@@ -4,16 +4,19 @@ import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { Button, Icon } from 'semantic-ui-react';
+// import { compareDesc } from 'date-fns';
 import { usePopup } from '../../lib/popup';
 
 import DroppableTypes from '../../constants/DroppableTypes';
 import CardContainer from '../../containers/CardContainer';
+import StatusColors, { getTranslationKey } from '../../constants/StatusColors';
 import NameEdit from './NameEdit';
 import CardAdd from './CardAdd';
 import ActionsStep from './ActionsStep';
 import { ReactComponent as PlusMathIcon } from '../../assets/images/plus-math-icon.svg';
 
 import styles from './List.module.scss';
+import globalStyles from '../../styles.module.scss';
 
 const List = React.memo(
   ({
@@ -27,12 +30,15 @@ const List = React.memo(
     onDelete,
     onSort,
     onCardCreate,
+    cards,
   }) => {
-    const [t] = useTranslation();
+    const { t, i18n } = useTranslation();
     const [isAddCardOpened, setIsAddCardOpened] = useState(false);
 
     const nameEdit = useRef(null);
     const listWrapper = useRef(null);
+
+    const statuses = i18n.options.resources[i18n.language].translation.status;
 
     const handleHeaderClick = useCallback(() => {
       if (isPersisted && canEdit) {
@@ -43,10 +49,10 @@ const List = React.memo(
     const handleNameUpdate = useCallback(
       (newName) => {
         onUpdate({
-          name: newName,
+          name: t(`status.${newName}`),
         });
       },
-      [onUpdate],
+      [onUpdate, t],
     );
 
     const handleAddCardClick = useCallback(() => {
@@ -83,9 +89,14 @@ const List = React.memo(
           // eslint-disable-next-line react/jsx-props-no-spreading
           <div {...droppableProps} ref={innerRef}>
             <div className={styles.cards}>
-              {cardIds.map((cardId, cardIndex) => (
-                <CardContainer key={cardId} id={cardId} index={cardIndex} />
-              ))}
+              {cards
+                .filter(() => {
+                  return true;
+                  // return compareDesc(new Date(), card.dueDate) < 1;
+                })
+                .map((card, cardIndex) => (
+                  <CardContainer key={card.id} id={card.id} index={cardIndex} />
+                ))}
               {placeholder}
               {canEdit && (
                 <CardAdd
@@ -109,7 +120,9 @@ const List = React.memo(
             ref={innerRef}
             className={styles.innerWrapper}
           >
-            <div className={styles.outerWrapper}>
+            <div
+              className={`${styles.outerWrapper} ${globalStyles[StatusColors[getTranslationKey(statuses, name)]]}`}
+            >
               {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
                                            jsx-a11y/no-static-element-interactions */}
               <div
@@ -151,7 +164,8 @@ const List = React.memo(
                 >
                   <PlusMathIcon className={styles.addCardButtonIcon} />
                   <span className={styles.addCardButtonText}>
-                    {cardIds.length > 0 ? t('action.addAnotherCard') : t('action.addCard')}
+                    {/* {cardIds.length > 0 ? t('action.addAnotherCard') : t('action.addCard')} */}
+                    {`${t('common.add')} ${name}`}
                   </span>
                 </button>
               )}
@@ -174,6 +188,7 @@ List.propTypes = {
   onSort: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onCardCreate: PropTypes.func.isRequired,
+  cards: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default List;

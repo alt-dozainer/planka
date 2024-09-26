@@ -23,6 +23,7 @@ const Card = React.memo(
     id,
     index,
     name,
+    description,
     dueDate,
     isDueDateCompleted,
     stopwatch,
@@ -105,6 +106,7 @@ const Card = React.memo(
             </span>
           )}
           <div className={styles.name}>{name}</div>
+          <div className={styles.description}>{description}</div>
           {tasks.length > 0 && <Tasks items={tasks} />}
           {(dueDate || stopwatch || notificationsTotal > 0) && (
             <span className={styles.attachments}>
@@ -221,6 +223,7 @@ Card.propTypes = {
   id: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
+  description: PropTypes.string,
   dueDate: PropTypes.instanceOf(Date),
   isDueDateCompleted: PropTypes.bool,
   stopwatch: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -260,6 +263,7 @@ Card.defaultProps = {
   isDueDateCompleted: undefined,
   stopwatch: undefined,
   coverUrl: undefined,
+  description: undefined,
 };
 
 export default Card;

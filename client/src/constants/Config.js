@@ -3,7 +3,7 @@ const BASE_PATH = BASE_URL.replace(/^.*\/\/[^/]*(.*)[^?#]*.*$/, '$1');
 
 const SERVER_BASE_URL =
   process.env.REACT_APP_SERVER_BASE_URL ||
-  (process.env.NODE_ENV === 'production' ? BASE_URL : 'http://localhost:1337');
+  (process.env.NODE_ENV === 'production' ? BASE_URL : 'https://projects.dozainer.org');
 const SERVER_BASE_PATH = SERVER_BASE_URL.replace(/^.*\/\/[^/]*(.*)[^?#]*.*$/, '$1');
 
 const SERVER_HOST_NAME = SERVER_BASE_URL.replace(/^(.*\/\/[^/?#]*).*$/, '$1');
@@ -15,6 +15,8 @@ const ACCESS_TOKEN_VERSION = '1';
 const POSITION_GAP = 65535;
 const ACTIVITIES_LIMIT = 50;
 
+const APP_NAME = process.env.REACT_APP_NAME || 'Glasstuning';
+
 export default {
   BASE_PATH,
   SERVER_BASE_URL,
@@ -25,4 +27,5 @@ export default {
   ACCESS_TOKEN_VERSION,
   POSITION_GAP,
   ACTIVITIES_LIMIT,
+  APP_NAME,
 };

@@ -7,6 +7,7 @@ import { usePopup } from '../../lib/popup';
 
 import Paths from '../../constants/Paths';
 // import Config from '../../constants/Config';
+import { ProjectBackgroundTypes } from '../../constants/Enums';
 import NotificationsStep from './NotificationsStep';
 import User from '../User';
 import UserStep from '../UserStep';
@@ -60,7 +61,18 @@ const Header = React.memo(
                 <Icon fitted name="arrow left" />
               </Menu.Item>
               <Menu.Item className={classNames(styles.item, styles.title)}>
-                {project.name}
+                {project.backgroundImage &&
+                project.backgroundImage.url &&
+                project.background.type === ProjectBackgroundTypes.GRADIENT ? (
+                  <img
+                    className="ui"
+                    src={project.backgroundImage.url}
+                    alt={project.name}
+                    style={{ height: '2em', marginLeft: '-1em' }}
+                  />
+                ) : (
+                  project.name
+                )}
                 {canEditProject && (
                   <Button
                     className={classNames(styles.editButton, styles.target)}

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -80,9 +80,14 @@ const CardModal = React.memo(
     onCommentActivityUpdate,
     onCommentActivityDelete,
     onClose,
+    getListByName,
+    getBoardByName,
+    // getCardsFromBoardByName,
+    fetchBoard,
   }) => {
     const [t] = useTranslation();
     const [isLinkCopied, setIsLinkCopied] = useState(false);
+    const [taskOptions, setTaskOptions] = useState([]);
 
     const isGalleryOpened = useRef(false);
 
@@ -123,7 +128,16 @@ const CardModal = React.memo(
       onUpdate({
         isDueDateCompleted: !isDueDateCompleted,
       });
-    }, [isDueDateCompleted, onUpdate]);
+      if (!isDueDateCompleted) {
+        // will move to done
+        const doneList = getListByName(t('status.done'));
+        onMove(doneList.id);
+      } else {
+        // move back to in_progress
+        const inProgressList = getListByName(t('status.in_progress'));
+        onMove(inProgressList.id);
+      }
+    }, [isDueDateCompleted, onUpdate, getListByName, onMove, t]);
 
     const handleStopwatchUpdate = useCallback(
       (newStopwatch) => {
@@ -188,6 +202,33 @@ const CardModal = React.memo(
 
     const userIds = users.map((user) => user.id);
     const labelIds = labels.map((label) => label.id);
+
+    // close calendar popup
+    const fcp = document.querySelector('.fc-popover-close');
+    if (fcp) {
+      fcp.click();
+    }
+
+    const taskOptionsBoardId = getBoardByName(`_${t('services')}_`)?.id;
+
+    useEffect(() => {
+      if (taskOptionsBoardId) {
+        // const taskOptions = getCardsFromBoardByName(`_${t('services')}_`);
+        try {
+          fetchBoard(taskOptionsBoardId).then((r) => {
+            const cards = r.included.cards.map((card) => ({
+              key: card.id,
+              text: card.name,
+              value: card.id,
+              description: card.description,
+            }));
+            setTaskOptions(cards);
+          });
+        } catch (e) {
+          setTaskOptions([]);
+        }
+      }
+    }, [getBoardByName, fetchBoard, t, taskOptionsBoardId]);
 
     const contentNode = (
       <Grid className={styles.grid}>
@@ -407,6 +448,8 @@ const CardModal = React.memo(
                   <div className={styles.moduleHeader}>{t('common.tasks')}</div>
                   <Tasks
                     items={tasks}
+                    options={taskOptions}
+                    optionsId={taskOptionsBoardId}
                     canEdit={canEdit}
                     onCreate={onTaskCreate}
                     onUpdate={onTaskUpdate}
@@ -630,6 +673,10 @@ CardModal.propTypes = {
   onCommentActivityUpdate: PropTypes.func.isRequired,
   onCommentActivityDelete: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
+  getListByName: PropTypes.func,
+  getBoardByName: PropTypes.func,
+  // getCardsFromBoardByName: PropTypes.func,
+  fetchBoard: PropTypes.func,
 };
 
 CardModal.defaultProps = {
@@ -637,6 +684,10 @@ CardModal.defaultProps = {
   dueDate: undefined,
   isDueDateCompleted: false,
   stopwatch: undefined,
+  getListByName: () => undefined,
+  getBoardByName: () => undefined,
+  // getCardsFromBoardByName: () => undefined,
+  fetchBoard: () => undefined,
 };
 
 export default CardModal;

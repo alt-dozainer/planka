@@ -15,6 +15,7 @@ import 'easymde/dist/easymde.min.css';
 import '../lib/custom-ui/styles.css';
 import '../assets/css/font-awesome.css';
 import '../styles.module.scss';
+import '../lib/custom-ui/calendar.css';
 
 function Root({ store, history }) {
   return (
@@ -27,6 +28,7 @@ function Root({ store, history }) {
           <Route path={Paths.PROJECTS} element={<CoreContainer />} />
           <Route path={Paths.BOARDS} element={<CoreContainer />} />
           <Route path={Paths.CARDS} element={<CoreContainer />} />
+          <Route path={Paths.BOARD_CALENDAR} element={<CoreContainer />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </ReduxRouter>

@@ -14,6 +14,7 @@ const makeMapStateToProps = () => {
     const { name, isPersisted } = selectListById(state, id);
     const cardIds = selectCardIdsByListId(state, id);
     const currentUserMembership = selectors.selectCurrentUserMembershipForCurrentBoard(state);
+    const cards = selectors.selectCardsByListId(state, id);
 
     const isCurrentUserEditor =
       !!currentUserMembership && currentUserMembership.role === BoardMembershipRoles.EDITOR;
@@ -25,6 +26,7 @@ const makeMapStateToProps = () => {
       isPersisted,
       cardIds,
       canEdit: isCurrentUserEditor,
+      cards,
     };
   };
 };

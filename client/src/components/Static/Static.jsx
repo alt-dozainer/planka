@@ -1,16 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation, Trans } from 'react-i18next';
 import { Icon, Loader } from 'semantic-ui-react';
-
+import { useNavigate } from 'react-router-dom';
 import ProjectsContainer from '../../containers/ProjectsContainer';
 import BoardContainer from '../../containers/BoardContainer';
+import Paths from '../../constants/Paths';
 
 import styles from './Static.module.scss';
 
-function Static({ projectId, cardId, board }) {
+function Static({ projectId, cardId, board, projects }) {
   const [t] = useTranslation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (projects[0]?.firstBoardId && !board && window.location.search.indexOf('?admin') === -1) {
+      navigate(Paths.BOARDS.replace(':id', projects[0].firstBoardId));
+    }
+    return () => {};
+  }, [navigate, projects, board]);
 
   if (projectId === undefined) {
     return (
@@ -99,12 +108,14 @@ Static.propTypes = {
   projectId: PropTypes.string,
   cardId: PropTypes.string,
   board: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  projects: PropTypes.array, // eslint-disable-line react/forbid-prop-types
 };
 
 Static.defaultProps = {
   projectId: undefined,
   cardId: undefined,
   board: undefined,
+  projects: [],
 };
 
 export default Static;

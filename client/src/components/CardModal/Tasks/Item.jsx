@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Draggable } from 'react-beautiful-dnd';
-import { Button, Checkbox, Icon } from 'semantic-ui-react';
+import { Button, Checkbox, Icon, Input } from 'semantic-ui-react';
 import { usePopup } from '../../../lib/popup';
 
 import NameEdit from './NameEdit';
@@ -11,24 +11,40 @@ import ActionsStep from './ActionsStep';
 import Linkify from '../../Linkify';
 
 import styles from './Item.module.scss';
+import globalStyles from '../../../styles.module.scss';
 
 const Item = React.memo(
-  ({ id, index, name, isCompleted, isPersisted, canEdit, onUpdate, onDelete }) => {
+  ({
+    id,
+    index,
+    name,
+    isCompleted,
+    isPersisted,
+    canEdit,
+    onUpdate,
+    onDelete,
+    description,
+    options,
+  }) => {
     const nameEdit = useRef(null);
 
-    const handleClick = useCallback(() => {
-      if (isPersisted && canEdit) {
-        nameEdit.current.open();
-      }
-    }, [isPersisted, canEdit]);
+    const handleClick = useCallback(
+      (e) => {
+        const isDescription = e.target.id.indexOf('task-description') >= 0;
+        if (isPersisted && canEdit && !isDescription) {
+          nameEdit.current.open();
+        }
+      },
+      [isPersisted, canEdit],
+    );
 
     const handleNameUpdate = useCallback(
-      (newName) => {
+      (newName, type) => {
         onUpdate({
-          name: newName,
+          name: type === 'description' ? `${name.split(' [')[0]} [${newName}]` : newName,
         });
       },
-      [onUpdate],
+      [onUpdate, name],
     );
 
     const handleToggleChange = useCallback(() => {
@@ -42,6 +58,12 @@ const Item = React.memo(
     }, []);
 
     const ActionsPopup = usePopup(ActionsStep);
+
+    const getDescription = name.split('[')?.[1]?.split(']')?.[0];
+
+    const getName = name.split(' [')[0];
+
+    const getValue = options.find((o) => o.text === name)?.value || name;
 
     return (
       <Draggable draggableId={id} index={index} isDragDisabled={!isPersisted || !canEdit}>
@@ -57,7 +79,12 @@ const Item = React.memo(
                   onChange={handleToggleChange}
                 />
               </span>
-              <NameEdit ref={nameEdit} defaultValue={name} onUpdate={handleNameUpdate}>
+              <NameEdit
+                ref={nameEdit}
+                defaultValue={getValue}
+                onUpdate={handleNameUpdate}
+                options={options}
+              >
                 <div className={classNames(canEdit && styles.contentHoverable)}>
                   {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
                                                jsx-a11y/no-static-element-interactions */}
@@ -66,12 +93,28 @@ const Item = React.memo(
                     onClick={handleClick}
                   >
                     <span className={classNames(styles.task, isCompleted && styles.taskCompleted)}>
-                      <Linkify linkStopPropagation>{name}</Linkify>
+                      <Linkify linkStopPropagation>{getName}</Linkify>
                     </span>
+                    {/* <span className="task-description">{description}</span> */}
+                    <Input
+                      id={`task-description-${id}`}
+                      className={classNames(
+                        'task-description-edit',
+                        'task-description',
+                        getDescription
+                          ? `${globalStyles.backgroundEggYellow} input-transparent`
+                          : '',
+                      )}
+                      value={getDescription || description}
+                      onChange={(e) => handleNameUpdate(e.target.value, 'description')}
+                    />
                   </span>
                   {isPersisted && canEdit && (
                     <ActionsPopup onNameEdit={handleNameEdit} onDelete={onDelete}>
-                      <Button className={classNames(styles.button, styles.target)}>
+                      <Button
+                        className={classNames(styles.button, styles.target)}
+                        style={{ marginTop: 4 }}
+                      >
                         <Icon fitted name="pencil" size="small" />
                       </Button>
                     </ActionsPopup>
@@ -97,6 +140,12 @@ Item.propTypes = {
   canEdit: PropTypes.bool.isRequired,
   onUpdate: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+  description: PropTypes.string,
+  options: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+};
+
+Item.defaultProps = {
+  description: '',
 };
 
 export default Item;

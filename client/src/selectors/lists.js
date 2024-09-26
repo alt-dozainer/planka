@@ -40,9 +40,24 @@ export const makeSelectCardIdsByListId = () =>
 
 export const selectCardIdsByListId = makeSelectCardIdsByListId();
 
+export const selectCardsByListId = createSelector(
+  orm,
+  (_, id) => id,
+  ({ List }, id) => {
+    const listModel = List.withId(id);
+
+    if (!listModel) {
+      return listModel;
+    }
+
+    return listModel.getFilteredOrderedCardsModelArray();
+  },
+);
+
 export default {
   makeSelectListById,
   selectListById,
   makeSelectCardIdsByListId,
   selectCardIdsByListId,
+  selectCardsByListId,
 };

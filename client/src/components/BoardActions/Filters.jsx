@@ -2,6 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from 'semantic-ui-react';
 import { usePopup } from '../../lib/popup';
 import { Input } from '../../lib/custom-ui';
@@ -12,6 +13,7 @@ import BoardMembershipsStep from '../BoardMembershipsStep';
 import LabelsStep from '../LabelsStep';
 
 import styles from './Filters.module.scss';
+import globalStyles from '../../styles.module.scss';
 
 const Filters = React.memo(
   ({
@@ -30,9 +32,22 @@ const Filters = React.memo(
     onLabelMove,
     onLabelDelete,
     onTextFilterUpdate,
+    currentBoard,
   }) => {
     const [t] = useTranslation();
+    const navigate = useNavigate();
     const [isSearchFocused, setIsSearchFocused] = useState(false);
+    const { search: searchParams, pathname } = useLocation();
+
+    const TODAY = `=${t('today')}`;
+    const THIS_WEEK = `=${t('thisWeek')}`;
+    const DUE = `=${t('due')}`;
+
+    const viewToday = searchParams.indexOf(`v${TODAY}`) >= 0;
+    const viewWeek = searchParams.indexOf(`v${THIS_WEEK}`) >= 0;
+    const viewDue = searchParams.indexOf(`v${DUE}`) >= 0;
+
+    const boardIsHidden = currentBoard.name.indexOf('_') >= 0;
 
     const searchFieldRef = useRef(null);
 
@@ -86,7 +101,18 @@ const Filters = React.memo(
     const BoardMembershipsPopup = usePopup(BoardMembershipsStep);
     const LabelsPopup = usePopup(LabelsStep);
 
-    const isSearchActive = filterText || isSearchFocused;
+    const isSearchActive = isSearchFocused;
+
+    //
+    if (viewToday) {
+      onTextFilterUpdate(TODAY);
+    }
+    if (viewWeek) {
+      onTextFilterUpdate(THIS_WEEK);
+    }
+    if (viewDue) {
+      onTextFilterUpdate(DUE);
+    }
 
     return (
       <>
@@ -162,6 +188,88 @@ const Filters = React.memo(
             onBlur={handleSearchBlur}
           />
         </span>
+
+        {!boardIsHidden && (
+          <>
+            <span className={styles.filter}>
+              <button
+                type="button"
+                className={styles.filterButton}
+                onClick={() => {
+                  setIsSearchFocused(false);
+                  if (filterText !== TODAY) {
+                    onTextFilterUpdate(TODAY);
+                    navigate(`${pathname}?v${TODAY}`);
+                  } else {
+                    onTextFilterUpdate('');
+                    navigate(`${pathname}`);
+                  }
+                }}
+              >
+                <span
+                  className={classNames(
+                    styles.filterLabel,
+                    filterText === TODAY ? globalStyles.backgroundGreenEyes : '',
+                  )}
+                >
+                  {t('today_title')}
+                </span>
+              </button>
+            </span>
+
+            <span className={styles.filter}>
+              <button
+                type="button"
+                className={styles.filterButton}
+                onClick={() => {
+                  setIsSearchFocused(false);
+                  if (filterText !== THIS_WEEK) {
+                    onTextFilterUpdate(THIS_WEEK);
+                    navigate(`${pathname}?v${THIS_WEEK}`);
+                  } else {
+                    onTextFilterUpdate('');
+                    navigate(`${pathname}`);
+                  }
+                }}
+              >
+                <span
+                  className={classNames(
+                    styles.filterLabel,
+                    filterText === THIS_WEEK ? globalStyles.backgroundSourPeel : '',
+                  )}
+                >
+                  {t('thisWeek_title')}
+                </span>
+              </button>
+            </span>
+
+            <span className={styles.filter}>
+              <button
+                type="button"
+                className={styles.filterButton}
+                onClick={() => {
+                  setIsSearchFocused(false);
+                  if (filterText !== DUE) {
+                    onTextFilterUpdate(DUE);
+                    navigate(`${pathname}?v${DUE}`);
+                  } else {
+                    onTextFilterUpdate('');
+                    navigate(`${pathname}`);
+                  }
+                }}
+              >
+                <span
+                  className={classNames(
+                    styles.filterLabel,
+                    filterText === DUE ? globalStyles.backgroundRedCurtain : '',
+                  )}
+                >
+                  {t('due_title')}
+                </span>
+              </button>
+            </span>
+          </>
+        )}
       </>
     );
   },
@@ -185,6 +293,7 @@ Filters.propTypes = {
   onLabelMove: PropTypes.func.isRequired,
   onLabelDelete: PropTypes.func.isRequired,
   onTextFilterUpdate: PropTypes.func.isRequired,
+  currentBoard: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default Filters;

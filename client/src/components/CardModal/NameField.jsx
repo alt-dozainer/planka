@@ -1,4 +1,5 @@
 import React, { useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import TextareaAutosize from 'react-textarea-autosize';
 import { TextArea } from 'semantic-ui-react';
@@ -9,14 +10,23 @@ import { useField } from '../../hooks';
 import styles from './NameField.module.scss';
 
 const NameField = React.memo(({ defaultValue, onUpdate }) => {
+  const { t } = useTranslation();
   const prevDefaultValue = usePrevious(defaultValue);
   const [value, handleChange, setValue] = useField(defaultValue);
 
   const isFocused = useRef(false);
 
-  const handleFocus = useCallback(() => {
-    isFocused.current = true;
-  }, []);
+  const scheduled = t('scheduled');
+
+  const handleFocus = useCallback(
+    (e) => {
+      isFocused.current = true;
+      if (value === scheduled) {
+        e.target.select();
+      }
+    },
+    [value, scheduled],
+  );
 
   const handleKeyDown = useCallback((event) => {
     if (event.key === 'Enter') {
@@ -56,6 +66,7 @@ const NameField = React.memo(({ defaultValue, onUpdate }) => {
       onKeyDown={handleKeyDown}
       onChange={handleChange}
       onBlur={handleBlur}
+      autoFocus={value === scheduled}
     />
   );
 });

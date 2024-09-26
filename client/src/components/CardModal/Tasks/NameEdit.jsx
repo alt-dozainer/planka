@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import TextareaAutosize from 'react-textarea-autosize';
-import { Button, Form, TextArea } from 'semantic-ui-react';
+// import TextareaAutosize from 'react-textarea-autosize';
+import { Button, Form, Dropdown, Icon } from 'semantic-ui-react';
 
 import { useField } from '../../../hooks';
-import { focusEnd } from '../../../utils/element-helpers';
+// import { focusEnd } from '../../../utils/element-helpers';
 
 import styles from './NameEdit.module.scss';
 
-const NameEdit = React.forwardRef(({ children, defaultValue, onUpdate }, ref) => {
+const NameEdit = React.forwardRef(({ children, defaultValue, onUpdate, options }, ref) => {
   const [t] = useTranslation();
   const [isOpened, setIsOpened] = useState(false);
   const [value, handleFieldChange, setValue] = useField(null);
@@ -45,16 +45,16 @@ const NameEdit = React.forwardRef(({ children, defaultValue, onUpdate }, ref) =>
     [open, close],
   );
 
-  const handleFieldKeyDown = useCallback(
-    (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
+  // const handleFieldKeyDown = useCallback(
+  //   (event) => {
+  //     if (event.key === 'Enter') {
+  //       event.preventDefault();
 
-        submit();
-      }
-    },
-    [submit],
-  );
+  //       submit();
+  //     }
+  //   },
+  //   [submit],
+  // );
 
   const handleFieldBlur = useCallback(() => {
     submit();
@@ -66,7 +66,7 @@ const NameEdit = React.forwardRef(({ children, defaultValue, onUpdate }, ref) =>
 
   useEffect(() => {
     if (isOpened) {
-      focusEnd(field.current.ref.current);
+      // focusEnd(field.current.ref.current);
     }
   }, [isOpened]);
 
@@ -74,9 +74,11 @@ const NameEdit = React.forwardRef(({ children, defaultValue, onUpdate }, ref) =>
     return children;
   }
 
+  const getValue = options.find((i) => i.text === value)?.value;
+
   return (
     <Form onSubmit={handleSubmit} className={styles.wrapper}>
-      <TextArea
+      {/* <TextArea
         ref={field}
         as={TextareaAutosize}
         value={value}
@@ -86,9 +88,35 @@ const NameEdit = React.forwardRef(({ children, defaultValue, onUpdate }, ref) =>
         onKeyDown={handleFieldKeyDown}
         onChange={handleFieldChange}
         onBlur={handleFieldBlur}
+      /> */}
+      <Dropdown
+        ref={field}
+        value={getValue || value}
+        placeholder={getValue || value}
+        // className={styles.field}
+        // onKeyDown={handleFieldKeyDown}
+        selection
+        allowAdditions
+        additionLabel=""
+        onChange={(e, o) => {
+          // handleFieldChange(e, {
+          //   name: 'value',
+          //   value: o.value, // o.options.find((i) => i.value === o.value)?.text,
+          // });
+          handleFieldChange(e, {
+            name: 'name',
+            value: o.options.find((i) => i.value === o.value)?.text || o.value,
+          });
+        }}
+        onBlur={handleFieldBlur}
+        search
+        options={options}
       />
       <div className={styles.controls}>
         <Button positive content={t('action.save')} />
+        <Button onClick={() => close()}>
+          <Icon fitted name="times" size="small" />
+        </Button>
       </div>
     </Form>
   );
@@ -98,6 +126,7 @@ NameEdit.propTypes = {
   children: PropTypes.element.isRequired,
   defaultValue: PropTypes.string.isRequired,
   onUpdate: PropTypes.func.isRequired,
+  options: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default React.memo(NameEdit);

@@ -1,8 +1,9 @@
 import { attr, fk } from 'redux-orm';
-
+import { compareAsc, isThisWeek } from 'date-fns';
 import BaseModel from './BaseModel';
 import User from './User';
 import ActionTypes from '../constants/ActionTypes';
+import i18n from '../i18n';
 
 export default class extends BaseModel {
   static modelName = 'List';
@@ -100,6 +101,68 @@ export default class extends BaseModel {
         re = new RegExp(filterText.substring(1), 'i');
       }
       let doRegularSearch = true;
+
+      //
+      if (filterText === `=${i18n.t('today')}`) {
+        cardModels = cardModels.filter((card) => {
+          const dueDate = new Date(card.dueDate);
+          if (card.dueDate) {
+            dueDate.setHours(0);
+            dueDate.setMinutes(0);
+            dueDate.setSeconds(0);
+            dueDate.setMilliseconds(0);
+          }
+          const today = new Date();
+          today.setHours(0);
+          today.setMinutes(0);
+          today.setSeconds(0);
+          today.setMilliseconds(0);
+
+          return compareAsc(today, dueDate) === 0 || !card.dueDate;
+        });
+        doRegularSearch = false;
+      }
+
+      if (filterText === `=${i18n.t('thisWeek')}`) {
+        cardModels = cardModels.filter((card) => {
+          const dueDate = new Date(card.dueDate);
+          if (card.dueDate) {
+            dueDate.setHours(0);
+            dueDate.setMinutes(0);
+            dueDate.setSeconds(0);
+            dueDate.setMilliseconds(0);
+          }
+          const today = new Date();
+          today.setHours(0);
+          today.setMinutes(0);
+          today.setSeconds(0);
+          today.setMilliseconds(0);
+
+          return isThisWeek(dueDate, { weekStartsOn: 1 });
+        });
+        doRegularSearch = false;
+      }
+
+      if (filterText === `=${i18n.t('due')}`) {
+        cardModels = cardModels.filter((card) => {
+          const dueDate = new Date(card.dueDate);
+          if (card.dueDate) {
+            dueDate.setHours(0);
+            dueDate.setMinutes(0);
+            dueDate.setSeconds(0);
+            dueDate.setMilliseconds(0);
+          }
+          const today = new Date();
+          today.setHours(0);
+          today.setMinutes(0);
+          today.setSeconds(0);
+          today.setMilliseconds(0);
+
+          return compareAsc(dueDate, today) === -1;
+        });
+        doRegularSearch = false;
+      }
+
       if (re) {
         cardModels = cardModels.filter(
           (cardModel) => re.test(cardModel.name) || re.test(cardModel?.description),
@@ -120,7 +183,8 @@ export default class extends BaseModel {
         cardModels = cardModels.filter(
           (cardModel) =>
             cardModel.name.toLocaleLowerCase().indexOf(lowerCasedFilter) >= 0 ||
-            cardModel.description?.toLocaleLowerCase().indexOf(lowerCasedFilter) >= 0,
+            cardModel.description?.toLocaleLowerCase().indexOf(lowerCasedFilter) >= 0 ||
+            cardModel.dueDate?.toString().indexOf(lowerCasedFilter) >= 0,
         );
       }
     }

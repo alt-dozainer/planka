@@ -1,26 +1,51 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
+import { Link, useLocation } from 'react-router-dom';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import roLocale from '@fullcalendar/core/locales/ro';
 import { closePopup } from '../../lib/popup';
+import Paths from '../../constants/Paths';
 
 import DroppableTypes from '../../constants/DroppableTypes';
 import ListContainer from '../../containers/ListContainer';
+import StatusColors, { getTranslationKey } from '../../constants/StatusColors';
 import CardModalContainer from '../../containers/CardModalContainer';
 import ListAdd from './ListAdd';
 import { ReactComponent as PlusMathIcon } from '../../assets/images/plus-math-icon.svg';
 
 import styles from './Board.module.scss';
+import globalStyles from '../../styles.module.scss';
 
 const parseDndId = (dndId) => dndId.split(':')[1];
 
 const Board = React.memo(
-  ({ listIds, isCardModalOpened, canEdit, onListCreate, onListMove, onCardMove }) => {
-    const [t] = useTranslation();
+  ({
+    listIds,
+    isCardModalOpened,
+    canEdit,
+    onListCreate,
+    onListMove,
+    onCardMove,
+    events,
+    getListByName,
+    onCardCreate,
+    onCardUpdate,
+  }) => {
+    const { t, i18n } = useTranslation();
+    const { search: searchParams } = useLocation();
     const [isListAddOpened, setIsListAddOpened] = useState(false);
+
+    const viewCalendar = searchParams.indexOf('v=events') >= 0;
 
     const wrapper = useRef(null);
     const prevPosition = useRef(null);
+
+    const statuses = i18n.options.resources[i18n.language].translation.status;
 
     const handleAddListClick = useCallback(() => {
       setIsListAddOpened(true);
@@ -121,7 +146,91 @@ const Board = React.memo(
       };
     }, [handleWindowMouseUp, handleWindowMouseMove]);
 
-    return (
+    // console.log('EVENTS (cards)', events);
+    const todayStr = new Date().toISOString().replace(/T.*$/, ''); // YYYY-MM-DD of today
+    const events2 = events.map((event) => ({
+      id: event.id,
+      title: event.name,
+      start: event.dueDate || todayStr,
+      extendedProps: {
+        some: 'prop',
+        listName: event.listName,
+      },
+      backgroundColor: '#ffffff',
+      // textColor: '#ffffff',
+      display: 'block',
+    }));
+
+    function renderEventContent(eventInfo) {
+      const { id } = eventInfo.event;
+      return (
+        <Link
+          to={Paths.CARDS.replace(':id', `${id}?v=events`)}
+          className={`event-title ${globalStyles[StatusColors[getTranslationKey(statuses, eventInfo.event.extendedProps.listName)]]}`}
+        >
+          <b>{eventInfo.timeText}</b>
+          &nbsp;
+          <i title={eventInfo.event.title}>{eventInfo.event.title}</i>
+        </Link>
+      );
+    }
+
+    function onClickDate() {
+      // console.log('EVENT', e);
+    }
+
+    function onChangeEvent(e) {
+      onCardUpdate(e.event.id, {
+        dueDate: e.event.start,
+      });
+    }
+
+    function handleDateSelect(e) {
+      const plannedList = getListByName(t('status.planned'));
+
+      if (plannedList) {
+        const listId = plannedList.id;
+        e.start.setHours(8);
+        const data = {
+          name: t('scheduled'),
+          dueDate: e.start,
+        };
+
+        const autoOpen = true;
+        onCardCreate(listId, data, autoOpen);
+      } else {
+        // console.log('no planned list');
+      }
+    }
+
+    return viewCalendar ? (
+      <>
+        <div className="calendar-wrapper">
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            headerToolbar={{
+              left: 'prev,next today',
+              center: 'title',
+              right: 'dayGridMonth,timeGridWeek,timeGridDay',
+            }}
+            // buttonText={{
+            //   today
+            // }}
+            locale={roLocale}
+            events={events2}
+            dayMaxEvents
+            eventContent={renderEventContent} // eslint-disable-line
+            eventClick={onClickDate} // eslint-disable-line
+            eventChange={onChangeEvent} // eslint-disable-line
+            select={handleDateSelect} // eslint-disable-line
+            selectable
+            editable
+          />
+        </div>
+        {isCardModalOpened && <CardModalContainer />}
+      </>
+    ) : (
       <>
         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
         <div ref={wrapper} className={styles.wrapper} onMouseDown={handleMouseDown}>
@@ -178,6 +287,15 @@ Board.propTypes = {
   onListCreate: PropTypes.func.isRequired,
   onListMove: PropTypes.func.isRequired,
   onCardMove: PropTypes.func.isRequired,
+  events: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+  getListByName: PropTypes.func,
+  onCardCreate: PropTypes.func.isRequired,
+  onCardUpdate: PropTypes.func.isRequired,
+};
+
+Board.defaultProps = {
+  events: [],
+  getListByName: () => undefined,
 };
 
 export default Board;

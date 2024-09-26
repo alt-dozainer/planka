@@ -1,0 +1,140 @@
+#app {
+  overflow-y: scroll;
+}
+
+.calendar-wrapper {
+  background: #fff;
+  margin: 0 20px 20px;
+  flex: 1;
+  max-width: 75%;
+  min-width: 650px;
+  min-height: 650px;
+  height: 70vh;
+  padding: 5px;
+  border-radius: 6px;
+  display: flex;
+}
+
+.fc-theme-standard {
+  background: inherit;
+  flex: 1;
+}
+
+.event-title {
+  display: block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-top: 1px;
+  padding-left: 2px;
+}
+.fc-h-event {
+  border: none;
+}
+.fc-v-event {
+  border: none;
+}
+
+.fc-event {
+  /*white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: calc(100% - 4px);*/
+}
+.fc-event-main {
+/*  display: inline;*/
+}
+.fc .fc-daygrid-event-harness.fc-daygrid-event-harness-abs {
+/*  position: unset;*/
+}
+.fc-timegrid-event-harness > .fc-timegrid-event {
+  position: static;
+}
+
+.fc-event, .fc-event a {
+  color: #fff;
+}
+
+.fc-toolbar-chunk {
+  line-height: 2.67rem;
+}
+
+.fc-daygrid-day-bottom {
+/*  margin-top: -1.8em !important;*/
+}
+
+.react-datepicker__day--today {
+  background: yellow;
+}
+
+.ui.search.dropdown {
+  line-height: 2.75em;
+  width: 100%;
+  background: #fff;
+}
+.ui.search.dropdown > .text {
+  width: calc(100% - 30px);
+  padding-left: 15px;
+  position: absolute;
+}
+.ui.search.selection.dropdown > .text {
+  margin-top: -11px;
+}
+.ui.search.dropdown > .menu {
+  width: 100%;
+}
+.ui.search.selection.dropdown {
+  max-height: 1em;
+}
+.ui.search.dropdown input.search {
+  line-height: 2.75em;
+  padding-left: 15px !important;
+  width: calc(100% - 30px);
+  position: static;
+}
+.ui.search.selection.dropdown input.search {
+  padding-left: 1px !important;
+  margin-top: -11px;
+}
+.ui.search.dropdown .message {
+  padding-top: 0;
+  padding-bottom: 0;
+  width: 100%;
+  right: 0;
+}
+
+.tab-icon {
+  vertical-align: top;
+}
+
+
+.task-description {
+  float: right;
+  margin-top: -2.2em;
+  font-size: 12px;
+  color: #aaa;
+  font-style: italic;
+}
+.task-description-edit.input > input {
+  font-size: 12px;
+  padding: 3px 8px !important;
+}
+.task-description-edit.input.input-transparent > input {
+  background: transparent !important;
+}
+.tasks-footer {
+  text-transform: uppercase;
+  display: block;
+  padding: 0 32px;
+  margin-top: 5px;
+  line-height: 2.5em;
+  text-align: right;
+  font-size: 12px;
+  color: #aaa;
+  font-weight: bold;
+}
+.tasks-footer .total-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+}
