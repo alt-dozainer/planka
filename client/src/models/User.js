@@ -295,10 +295,14 @@ export default class extends BaseModel {
     }
   }
 
-  static getOrderedUndeletedQuerySet() {
-    return this.filter({
+  static getOrderedUndeletedQuerySet(org) {
+    const filter = {
       deletedAt: null,
-    }).orderBy((user) => user.name.toLocaleLowerCase());
+    };
+    if (org !== 'all') {
+      filter.organization = org || document.domain;
+    }
+    return this.filter(filter).orderBy((user) => user.name.toLocaleLowerCase());
   }
 
   getOrderedProjectManagersQuerySet() {

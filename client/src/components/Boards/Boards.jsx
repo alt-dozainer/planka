@@ -130,7 +130,7 @@ const Boards = React.memo(
                       title={item.name}
                       className={styles.link}
                     >
-                      <Icon fitted name="tags" className="tab-icon" />
+                      {isHidden(item) && <Icon fitted name="tags" className="tab-icon" />}
                       &nbsp;&nbsp;&nbsp;
                       {isHidden(item) ? item.name.replaceAll('_', ' ') : item.name}
                     </Link>

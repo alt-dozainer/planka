@@ -75,6 +75,7 @@ const AccountPane = React.memo(
             name,
             phone,
             organization,
+            email,
           }}
           isNameEditable={!isLocked}
           onUpdate={onUpdate}
@@ -87,6 +88,7 @@ const AccountPane = React.memo(
           </Header>
         </Divider>
         <Dropdown
+          disabled
           fluid
           selection
           options={[
@@ -102,7 +104,7 @@ const AccountPane = React.memo(
               text: locale.name,
             })),
           ]}
-          value={language || 'auto'}
+          value={language || 'ro-RO' || 'auto'}
           onChange={handleLanguageChange}
         />
         {(!isLocked || !isUsernameLocked) && (

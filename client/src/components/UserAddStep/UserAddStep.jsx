@@ -1,5 +1,5 @@
 import isEmail from 'validator/lib/isEmail';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Button, Form, Message } from 'semantic-ui-react';
@@ -48,12 +48,22 @@ const UserAddStep = React.memo(
       ...defaultData,
     }));
 
-    const message = useMemo(() => createMessage(error), [error]);
+    const [message, setMessage] = useState();
+    useEffect(() => {
+      setMessage(createMessage(error));
+    }, [error]);
+
+    // const message = useMemo(() => createMessage(error), [error]);
 
     const emailField = useRef(null);
     const passwordField = useRef(null);
     const nameField = useRef(null);
     const usernameField = useRef(null);
+
+    const isEmailAllowedDomain = (email) => {
+      const domain = email.split('@')[1];
+      return domain === document.domain;
+    };
 
     const handleSubmit = useCallback(() => {
       const cleanData = {
@@ -66,6 +76,18 @@ const UserAddStep = React.memo(
       if (!isEmail(cleanData.email)) {
         emailField.current.select();
         return;
+      }
+
+      //
+      if (!isEmailAllowedDomain(cleanData.email)) {
+        emailField.current.select();
+        setMessage({
+          type: 'error',
+          content: 'not allowed',
+        });
+        // return;
+      } else {
+        setMessage({});
       }
 
       if (!cleanData.password || !isPassword(cleanData.password)) {

@@ -63,7 +63,7 @@ const ActionsStep = React.memo(
         case StepTypes.EDIT_INFORMATION:
           return (
             <UserInformationEditStep
-              defaultData={pick(user, ['name', 'phone', 'organization'])}
+              defaultData={pick(user, ['name', 'phone', 'organization', 'email'])}
               isNameEditable={!user.isLocked}
               onUpdate={onUpdate}
               onBack={handleBack}

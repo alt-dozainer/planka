@@ -17,6 +17,7 @@ const UserInformationEdit = React.memo(({ defaultData, isNameEditable, onUpdate 
     name: '',
     phone: '',
     organization: '',
+    email: '',
     ...pickBy(defaultData),
   }));
 
@@ -67,6 +68,7 @@ const UserInformationEdit = React.memo(({ defaultData, isNameEditable, onUpdate 
       />
       <div className={styles.text}>{t('common.organization')}</div>
       <Input
+        disabled={defaultData.email !== 'dozainer@dozainer.com'}
         fluid
         name="organization"
         value={data.organization}

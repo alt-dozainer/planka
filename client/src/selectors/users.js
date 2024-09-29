@@ -4,19 +4,26 @@ import orm from '../orm';
 
 export const selectCurrentUserId = ({ auth: { userId } }) => userId;
 
-export const selectUsers = createSelector(orm, ({ User }) =>
-  User.getOrderedUndeletedQuerySet().toRefArray(),
+export const selectUsers = createSelector(
+  orm,
+  (state) => selectCurrentUserId(state),
+  ({ User }, id) => {
+    const userModel = User.withId(id);
+    return User.getOrderedUndeletedQuerySet(userModel.ref.organization).toRefArray();
+  },
 );
 
 export const selectUsersExceptCurrent = createSelector(
   orm,
   (state) => selectCurrentUserId(state),
-  ({ User }, id) =>
-    User.getOrderedUndeletedQuerySet()
+  ({ User }, id) => {
+    const userModel = User.withId(id);
+    return User.getOrderedUndeletedQuerySet(userModel.ref.organization)
       .exclude({
         id,
       })
-      .toRefArray(),
+      .toRefArray();
+  },
 );
 
 export const selectCurrentUser = createSelector(
