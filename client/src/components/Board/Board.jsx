@@ -1,3 +1,5 @@
+import upperFirst from 'lodash/upperFirst';
+import camelCase from 'lodash/camelCase';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
@@ -155,6 +157,7 @@ const Board = React.memo(
       extendedProps: {
         some: 'prop',
         listName: event.listName,
+        labels: event.labels,
       },
       backgroundColor: '#ffffff',
       // textColor: '#ffffff',
@@ -171,6 +174,16 @@ const Board = React.memo(
           <b>{eventInfo.timeText}</b>
           &nbsp;
           <i title={eventInfo.event.title}>{eventInfo.event.title}</i>
+          <span className="event-labels">
+            {eventInfo.event.extendedProps?.labels?.map((label) => (
+              <span key={`event-label-${label.id}`}>
+                &nbsp;
+                <span className={globalStyles[`background${upperFirst(camelCase(label.color))}`]}>
+                  {label.name}
+                </span>
+              </span>
+            ))}
+          </span>
         </Link>
       );
     }
@@ -219,7 +232,8 @@ const Board = React.memo(
             // }}
             locale={roLocale}
             events={events2}
-            dayMaxEvents
+            // dayMaxEvents
+            dayMaxEventRows={5}
             eventContent={renderEventContent} // eslint-disable-line
             eventClick={onClickDate} // eslint-disable-line
             eventChange={onChangeEvent} // eslint-disable-line

@@ -43,7 +43,7 @@ export const selectCurrentBoard = createSelector(
 export const selectAllCardsForCurrentBoard = createSelector(
   orm,
   (state) => selectPath(state).boardId,
-  ({ Board, List }, id) => {
+  ({ Board, List, Card }, id) => {
     if (!id) {
       return id;
     }
@@ -56,6 +56,7 @@ export const selectAllCardsForCurrentBoard = createSelector(
 
     return boardModel.cards.toRefArray().map((card) => ({
       ...card,
+      labels: Card.withId(card.id).labels.toRefArray(),
       listName: List.withId(card.listId).ref.name,
     }));
   },

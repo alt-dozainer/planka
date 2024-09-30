@@ -5,7 +5,7 @@ import { Modal, Tab } from 'semantic-ui-react';
 
 import AccountPane from './AccountPane';
 import PreferencesPane from './PreferencesPane';
-import AboutPane from './AboutPane';
+// import AboutPane from './AboutPane';
 
 const UserSettingsModal = React.memo(
   ({
