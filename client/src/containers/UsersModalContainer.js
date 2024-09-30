@@ -8,10 +8,12 @@ import UsersModal from '../components/UsersModal';
 const mapStateToProps = (state) => {
   const oidcConfig = selectors.selectOidcConfig(state);
   const users = selectors.selectUsersExceptCurrent(state);
+  const currentUser = selectors.selectCurrentUser(state);
 
   return {
     items: users,
     canAdd: !oidcConfig || !oidcConfig.isEnforced,
+    currentUser,
   };
 };
 

@@ -32,6 +32,7 @@ const Item = React.memo(
     onPasswordUpdate,
     onPasswordUpdateMessageDismiss,
     onDelete,
+    currentUser,
   }) => {
     const handleIsAdminChange = useCallback(() => {
       onUpdate({
@@ -76,6 +77,7 @@ const Item = React.memo(
             onPasswordUpdate={onPasswordUpdate}
             onPasswordUpdateMessageDismiss={onPasswordUpdateMessageDismiss}
             onDelete={onDelete}
+            currentUser={currentUser}
           >
             <Button className={styles.button}>
               <Icon fitted name="pencil" />
@@ -112,6 +114,7 @@ Item.propTypes = {
   onPasswordUpdate: PropTypes.func.isRequired,
   onPasswordUpdateMessageDismiss: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+  currentUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 Item.defaultProps = {

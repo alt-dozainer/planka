@@ -10,7 +10,7 @@ import { useForm } from '../../hooks';
 
 import styles from './UserInformationEdit.module.scss';
 
-const UserInformationEdit = React.memo(({ defaultData, isNameEditable, onUpdate }) => {
+const UserInformationEdit = React.memo(({ defaultData, isNameEditable, onUpdate, currentUser }) => {
   const [t] = useTranslation();
 
   const [data, handleFieldChange] = useForm(() => ({
@@ -68,7 +68,7 @@ const UserInformationEdit = React.memo(({ defaultData, isNameEditable, onUpdate 
       />
       <div className={styles.text}>{t('common.organization')}</div>
       <Input
-        disabled={defaultData.email !== 'dozainer@dozainer.com'}
+        disabled={(currentUser || data).email !== 'dozainer@dozainer.org'}
         fluid
         name="organization"
         value={data.organization}
@@ -84,6 +84,7 @@ UserInformationEdit.propTypes = {
   defaultData: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   isNameEditable: PropTypes.bool.isRequired,
   onUpdate: PropTypes.func.isRequired,
+  currentUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default UserInformationEdit;

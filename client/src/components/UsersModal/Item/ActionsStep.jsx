@@ -34,6 +34,7 @@ const ActionsStep = React.memo(
     onPasswordUpdateMessageDismiss,
     onDelete,
     onClose,
+    currentUser,
   }) => {
     const [t] = useTranslation();
     const [step, openStep, handleBack] = useSteps();
@@ -63,11 +64,12 @@ const ActionsStep = React.memo(
         case StepTypes.EDIT_INFORMATION:
           return (
             <UserInformationEditStep
-              defaultData={pick(user, ['name', 'phone', 'organization', 'email'])}
+              defaultData={pick(user, ['name', 'phone', 'organization'])}
               isNameEditable={!user.isLocked}
               onUpdate={onUpdate}
               onBack={handleBack}
               onClose={onClose}
+              currentUser={currentUser}
             />
           );
         case StepTypes.EDIT_USERNAME:
@@ -182,6 +184,7 @@ ActionsStep.propTypes = {
   onPasswordUpdateMessageDismiss: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
+  currentUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default ActionsStep;

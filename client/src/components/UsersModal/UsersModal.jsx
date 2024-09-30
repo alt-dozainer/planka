@@ -20,6 +20,7 @@ const UsersModal = React.memo(
     onPasswordUpdateMessageDismiss,
     onDelete,
     onClose,
+    currentUser,
   }) => {
     const [t] = useTranslation();
 
@@ -126,6 +127,7 @@ const UsersModal = React.memo(
                   onPasswordUpdate={(data) => handlePasswordUpdate(item.id, data)}
                   onPasswordUpdateMessageDismiss={() => handlePasswordUpdateMessageDismiss(item.id)}
                   onDelete={() => handleDelete(item.id)}
+                  currentUser={currentUser}
                 />
               ))}
             </Table.Body>
@@ -155,6 +157,7 @@ UsersModal.propTypes = {
   onPasswordUpdateMessageDismiss: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
+  currentUser: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default UsersModal;
