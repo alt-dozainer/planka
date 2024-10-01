@@ -49,7 +49,7 @@ const List = React.memo(
     const handleNameUpdate = useCallback(
       (newName) => {
         onUpdate({
-          name: t(`status.${newName}`),
+          name: t(`${newName}`),
         });
       },
       [onUpdate, t],
@@ -131,7 +131,9 @@ const List = React.memo(
                 onClick={handleHeaderClick}
               >
                 <NameEdit ref={nameEdit} defaultValue={name} onUpdate={handleNameUpdate}>
-                  <div className={styles.headerName}>{name}</div>
+                  <div className={styles.headerName}>
+                    {statuses[name] ? t(`status.${name}`) : name}
+                  </div>
                 </NameEdit>
                 {isPersisted && canEdit && (
                   <ActionsPopup
@@ -163,7 +165,7 @@ const List = React.memo(
                   onClick={handleAddCardClick}
                 >
                   <PlusMathIcon className={styles.addCardButtonIcon} />
-                  <span className={styles.addCardButtonText}>
+                  <span className={styles.addCardButtonText} title={`${t('common.add')} ${name}`}>
                     {/* {cardIds.length > 0 ? t('action.addAnotherCard') : t('action.addCard')} */}
                     {`${t('common.add')} ${name}`}
                   </span>

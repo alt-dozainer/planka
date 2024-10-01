@@ -33,6 +33,10 @@
     line-height: 20px;
     margin-left: 2px;
     vertical-align: top;
+    width: calc(100% - 30px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .cards {

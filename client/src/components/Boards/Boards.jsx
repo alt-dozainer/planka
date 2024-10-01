@@ -1,4 +1,6 @@
 import pick from 'lodash/pick';
+import upperFirst from 'lodash/upperFirst';
+import camelCase from 'lodash/camelCase';
 import React, { useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
@@ -132,7 +134,9 @@ const Boards = React.memo(
                     >
                       {isHidden(item) && <Icon fitted name="tags" className="tab-icon" />}
                       &nbsp;&nbsp;&nbsp;
-                      {isHidden(item) ? item.name.replaceAll('_', ' ') : item.name}
+                      {isHidden(item)
+                        ? upperFirst(camelCase(item.name.replaceAll('_', ' ')))
+                        : item.name}
                     </Link>
                     {canEdit && (
                       <EditPopup

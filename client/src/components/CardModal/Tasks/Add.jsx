@@ -77,7 +77,8 @@ const Add = React.forwardRef(({ children, onCreate, options, optionsId }, ref) =
 
   const handleSubmit = useCallback(() => {
     submit();
-  }, [submit]);
+    close();
+  }, [submit, close]);
 
   useEffect(() => {
     if (isOpened) {
@@ -99,6 +100,8 @@ const Add = React.forwardRef(({ children, onCreate, options, optionsId }, ref) =
     //
   }
 
+  const getValue = options.find((i) => i.text === data.value)?.value;
+
   return (
     <Form className={styles.wrapper} onSubmit={handleSubmit}>
       {/* <TextArea
@@ -116,14 +119,17 @@ const Add = React.forwardRef(({ children, onCreate, options, optionsId }, ref) =
       /> */}
       <Dropdown
         ref={nameField}
-        value={data.value}
-        placeholder={t('common.enterTaskDescription')}
+        value={getValue || data.value}
+        placeholder={getValue || data.name || t('common.enterTaskDescription')}
         // className={styles.field}
         // onKeyDown={handleFieldKeyDown}
+        selection
+        allowAdditions
+        additionLabel=""
         onChange={(e, o) =>
           handleFieldChange(e, {
             name: 'name',
-            value: o.options.find((i) => i.value === o.value)?.text,
+            value: o.options.find((i) => i.value === o.value)?.text || o.value,
           })
         }
         onBlur={handleFieldBlur}

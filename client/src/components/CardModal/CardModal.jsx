@@ -131,11 +131,15 @@ const CardModal = React.memo(
       if (!isDueDateCompleted) {
         // will move to done
         const doneList = getListByName(t('status.done'));
-        onMove(doneList.id);
+        if (doneList) {
+          onMove(doneList.id);
+        }
       } else {
         // move back to in_progress
         const inProgressList = getListByName(t('status.in_progress'));
-        onMove(inProgressList.id);
+        if (inProgressList) {
+          onMove(inProgressList.id);
+        }
       }
     }, [isDueDateCompleted, onUpdate, getListByName, onMove, t]);
 
@@ -220,7 +224,7 @@ const CardModal = React.memo(
               key: card.id,
               text: card.name,
               value: card.id,
-              description: card.description,
+              description: card.description?.replaceAll('\n', ' '),
             }));
             setTaskOptions(cards);
           });

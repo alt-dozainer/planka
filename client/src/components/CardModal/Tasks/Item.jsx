@@ -3,12 +3,14 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { Draggable } from 'react-beautiful-dnd';
+import { Link } from 'react-router-dom';
 import { Button, Checkbox, Icon, Input } from 'semantic-ui-react';
 import { usePopup } from '../../../lib/popup';
 
 import NameEdit from './NameEdit';
 import ActionsStep from './ActionsStep';
 import Linkify from '../../Linkify';
+import Paths from '../../../constants/Paths';
 
 import styles from './Item.module.scss';
 import globalStyles from '../../../styles.module.scss';
@@ -65,6 +67,8 @@ const Item = React.memo(
 
     const getValue = options.find((o) => o.text === name)?.value || name;
 
+    const getId = options.find((o) => o.text === name)?.key;
+
     return (
       <Draggable draggableId={id} index={index} isDragDisabled={!isPersisted || !canEdit}>
         {({ innerRef, draggableProps, dragHandleProps }, { isDragging }) => {
@@ -94,6 +98,22 @@ const Item = React.memo(
                   >
                     <span className={classNames(styles.task, isCompleted && styles.taskCompleted)}>
                       <Linkify linkStopPropagation>{getName}</Linkify>
+                      &nbsp;
+                      {getId && (
+                        <Link
+                          to={Paths.CARDS.replace(':id', getId)}
+                          className={classNames(styles.button, styles.target)}
+                          style={{
+                            lineHeight: '1em',
+                            marginLeft: 4,
+                            position: 'static',
+                            display: 'inline',
+                            background: 'none',
+                          }}
+                        >
+                          <Icon fitted name="linkify" size="small" />
+                        </Link>
+                      )}
                     </span>
                     {/* <span className="task-description">{description}</span> */}
                     <Input
