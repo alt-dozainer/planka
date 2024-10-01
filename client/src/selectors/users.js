@@ -9,7 +9,8 @@ export const selectUsers = createSelector(
   (state) => selectCurrentUserId(state),
   ({ User }, id) => {
     const userModel = User.withId(id);
-    return User.getOrderedUndeletedQuerySet(userModel.ref.organization).toRefArray();
+    const organization = userModel.ref.organization || userModel.ref.email.split('@')[1];
+    return User.getOrderedUndeletedQuerySet(organization).toRefArray();
   },
 );
 
@@ -18,7 +19,8 @@ export const selectUsersExceptCurrent = createSelector(
   (state) => selectCurrentUserId(state),
   ({ User }, id) => {
     const userModel = User.withId(id);
-    return User.getOrderedUndeletedQuerySet(userModel.ref.organization)
+    const organization = userModel.ref.organization || userModel.ref.email.split('@')[1];
+    return User.getOrderedUndeletedQuerySet(organization)
       .exclude({
         id,
       })

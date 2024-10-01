@@ -296,12 +296,16 @@ export default class extends BaseModel {
   }
 
   static getOrderedUndeletedQuerySet(org) {
-    const filter = {
-      deletedAt: null,
+    const filter = (user) => {
+      return (
+        (org === 'all' ||
+          user.organization === org ||
+          user.organization === document.domain ||
+          user.email.includes(org || document.domain)) && //
+        user.deletedAt === null
+      );
     };
-    if (org !== 'all') {
-      filter.organization = org || document.domain;
-    }
+
     return this.filter(filter).orderBy((user) => user.name.toLocaleLowerCase());
   }
 
