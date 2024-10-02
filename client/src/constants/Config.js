@@ -15,7 +15,10 @@ const ACCESS_TOKEN_VERSION = '1';
 const POSITION_GAP = 65535;
 const ACTIVITIES_LIMIT = 50;
 
-const APP_NAME = process.env.REACT_APP_NAME || 'Glasstuning';
+const APP_NAME =
+  process.env.REACT_APP_NAME ||
+  window.location.hostname.split('.')[0].split('localhost')[0] ||
+  '🚧';
 
 export default {
   BASE_PATH,

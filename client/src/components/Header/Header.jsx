@@ -6,7 +6,7 @@ import { Button, Icon, Menu } from 'semantic-ui-react';
 import { usePopup } from '../../lib/popup';
 
 import Paths from '../../constants/Paths';
-// import Config from '../../constants/Config';
+import Config from '../../constants/Config';
 import { ProjectBackgroundTypes } from '../../constants/Enums';
 import NotificationsStep from './NotificationsStep';
 import User from '../User';
@@ -18,7 +18,7 @@ const POPUP_PROPS = {
   position: 'bottom right',
 };
 
-// const { APP_NAME } = Config;
+const { APP_NAME } = Config;
 
 const Header = React.memo(
   ({
@@ -47,7 +47,7 @@ const Header = React.memo(
       <div className={styles.wrapper}>
         {!project && (
           <Link to={Paths.ROOT} className={classNames(styles.logo, styles.title)}>
-            dozainer
+            {APP_NAME}
           </Link>
         )}
         <Menu inverted size="large" className={styles.menu}>

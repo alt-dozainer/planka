@@ -33,6 +33,7 @@ const Filters = React.memo(
     onLabelDelete,
     onTextFilterUpdate,
     currentBoard,
+    isManager,
   }) => {
     const [t] = useTranslation();
     const navigate = useNavigate();
@@ -124,7 +125,7 @@ const Filters = React.memo(
             onUserSelect={onUserAdd}
             onUserDeselect={onUserRemove}
           >
-            <button type="button" className={styles.filterButton}>
+            <button disabled={!isManager} type="button" className={styles.filterButton}>
               <span className={styles.filterTitle}>{`${t('common.members')}:`}</span>
               {users.length === 0 && <span className={styles.filterLabel}>{t('common.all')}</span>}
             </button>
@@ -294,6 +295,7 @@ Filters.propTypes = {
   onLabelDelete: PropTypes.func.isRequired,
   onTextFilterUpdate: PropTypes.func.isRequired,
   currentBoard: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  isManager: PropTypes.bool.isRequired,
 };
 
 export default Filters;

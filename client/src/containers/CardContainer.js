@@ -19,6 +19,7 @@ const makeMapStateToProps = () => {
     const allBoardMemberships = selectors.selectMembershipsForCurrentBoard(state);
     const allLabels = selectors.selectLabelsForCurrentBoard(state);
     const currentUserMembership = selectors.selectCurrentUserMembershipForCurrentBoard(state);
+    // const currentUser = selectors.selectCurrentUser(state);
 
     const {
       name,
@@ -30,7 +31,10 @@ const makeMapStateToProps = () => {
       boardId,
       listId,
       isPersisted,
+      // creatorUserId,
     } = selectCardById(state, id);
+
+    const ownCard = true; // currentUser.id === creatorUserId;
 
     const users = selectUsersByCardId(state, id);
     const labels = selectLabelsByCardId(state, id);
@@ -60,7 +64,7 @@ const makeMapStateToProps = () => {
       allProjectsToLists,
       allBoardMemberships,
       allLabels,
-      canEdit: isCurrentUserEditor,
+      canEdit: isCurrentUserEditor && ownCard,
     };
   };
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import Filters from './Filters';
@@ -30,7 +30,16 @@ const BoardActions = React.memo(
     onLabelDelete,
     onTextFilterUpdate,
     currentBoard,
+    currentUserId,
+    isManager,
   }) => {
+    //
+    useEffect(() => {
+      if (!isManager && !filterUsers.find((user) => user.id === currentUserId)) {
+        onUserToFilterAdd(currentUserId);
+      }
+    }, [currentUserId, onUserToFilterAdd, isManager, filterUsers]);
+
     return (
       <div className={styles.wrapper}>
         <div className={styles.actions}>
@@ -47,6 +56,7 @@ const BoardActions = React.memo(
           </div>
           <div className={styles.action}>
             <Filters
+              isManager={isManager}
               users={filterUsers}
               labels={filterLabels}
               filterText={filterText}
@@ -95,6 +105,8 @@ BoardActions.propTypes = {
   onLabelDelete: PropTypes.func.isRequired,
   onTextFilterUpdate: PropTypes.func.isRequired,
   currentBoard: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  currentUserId: PropTypes.string.isRequired,
+  isManager: PropTypes.bool.isRequired,
 };
 
 export default BoardActions;
