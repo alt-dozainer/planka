@@ -51,8 +51,7 @@ jobs:
           rm -rf /var/www/planka/public/static/js
           rm -rf /var/www/planka/plublc/static/css
         scp: |
-          './client/build/static/*' => /var/www/planka/public/static/
-          './client/build/clients/*' => /var/www/planka/public/clients/
+          './client/build/*' => /var/www/planka/public/
           './client/build/index*.html' => /var/www/planka/views/
         last_ssh: |
           cd /var/www/planka/views/
