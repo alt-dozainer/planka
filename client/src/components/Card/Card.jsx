@@ -89,6 +89,13 @@ const Card = React.memo(
 
     const ActionsPopup = usePopup(ActionsStep);
 
+    let desc = description;
+    try {
+      desc = description ? JSON.parse(description)?.description : description;
+    } catch (e) {
+      //
+    }
+
     const contentNode = (
       <>
         {coverUrl && <img src={coverUrl} alt="" className={styles.cover} />}
@@ -106,7 +113,7 @@ const Card = React.memo(
             </span>
           )}
           <div className={styles.name}>{name}</div>
-          <div className={styles.description}>{description}</div>
+          <div className={styles.description}>{desc}</div>
           {tasks.length > 0 && <Tasks items={tasks} />}
           {(dueDate || stopwatch || notificationsTotal > 0) && (
             <span className={styles.attachments}>

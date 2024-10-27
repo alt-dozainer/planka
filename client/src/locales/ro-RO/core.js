@@ -74,7 +74,7 @@ export default {
       deleteProject_title: 'Șterge proiectul',
       deleteTask_title: 'Ștergeți sarcina',
       deleteUser_title: 'Șterge utilizator',
-      description: 'Descriere',
+      description: 'Detalii',
       detectAutomatically: 'Detectează automat',
       dropFileToUpload: 'Aruncă fișierul pentru a încărca',
       editor: 'Editor',
@@ -163,6 +163,7 @@ export default {
         '{{user}} a mutat <2>{{card}}</2> din {{fromList}} în {{toList}}',
       userMovedThisCardFromListToList:
         '<0>{{user}}</0><1> a mutat acest card din {{fromList}} în {{toList}}</1>',
+      userCompletedTask: 'a finalizat',
       username: 'Nume utilizator',
       usernameAlreadyInUse: 'Nume utilizator deja exista',
       users: 'Utilizatori',

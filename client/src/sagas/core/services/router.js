@@ -19,11 +19,25 @@ export function* goToProject(projectId) {
 }
 
 export function* goToBoard(boardId) {
-  yield put(push(Paths.BOARDS.replace(':id', boardId)));
+  yield put(
+    push(
+      Paths.BOARDS.replace(
+        ':id',
+        window.location.search ? `${boardId}${window.location.search}` : boardId,
+      ),
+    ),
+  );
 }
 
 export function* goToCard(cardId) {
-  yield put(push(Paths.CARDS.replace(':id', cardId)));
+  yield put(
+    push(
+      Paths.CARDS.replace(
+        ':id',
+        window.location.search ? `${cardId}${window.location.search}` : cardId,
+      ),
+    ),
+  );
 }
 
 export function* handleLocationChange() {

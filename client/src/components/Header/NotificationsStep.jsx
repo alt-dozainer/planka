@@ -50,6 +50,22 @@ const NotificationsStep = React.memo(({ items, onDelete, onClose }) => {
         case ActivityTypes.COMMENT_CARD: {
           const commentText = truncate(activity.data.text);
 
+          if (activity.data.metaType === 'taskDone') {
+            return (
+              <>
+                {activity.user.name}
+                &nbsp;
+                {t('common.userCompletedTask')}
+                &nbsp;
+                {commentText}
+                &nbsp;
+                <Link to={Paths.CARDS.replace(':id', card.id)} onClick={onClose}>
+                  {card.name}
+                </Link>
+              </>
+            );
+          }
+
           return (
             <Trans
               i18nKey="common.userLeftNewCommentToCard"
@@ -72,7 +88,7 @@ const NotificationsStep = React.memo(({ items, onDelete, onClose }) => {
 
       return null;
     },
-    [onClose],
+    [onClose, t],
   );
 
   return (

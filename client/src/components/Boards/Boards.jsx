@@ -177,7 +177,7 @@ const Boards = React.memo(
                     className={`${styles.link} ${globalStyles.backgroundRedCurtain}`}
                     style={{ paddingRight: 20 }}
                   >
-                    <Icon fitted name="calendar alternate" className="tab-icon" />
+                    <Icon fitted name="calendar alternate outline" className="tab-icon" />
                     &nbsp;&nbsp;&nbsp;
                     {t('agenda')}
                   </Link>

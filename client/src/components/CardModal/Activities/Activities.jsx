@@ -44,6 +44,11 @@ const Activities = React.memo(
       [onCommentDelete],
     );
 
+    const items2 = items.map((item) => ({
+      ...item,
+      type: item.data?.metaType || item.type,
+    }));
+
     return (
       <div className={styles.contentModule}>
         <div className={styles.moduleWrapper}>
@@ -59,7 +64,7 @@ const Activities = React.memo(
           {canEdit && <CommentAdd onCreate={onCommentCreate} />}
           <div className={styles.wrapper}>
             <Comment.Group>
-              {items.map((item) =>
+              {items2.map((item) =>
                 item.type === ActivityTypes.COMMENT_CARD ? (
                   <Item.Comment
                     key={item.id}
@@ -78,6 +83,8 @@ const Activities = React.memo(
                     data={item.data}
                     createdAt={item.createdAt}
                     user={item.user}
+                    canEdit={(item.user.isCurrent && canEdit) || canEditAllComments}
+                    onDelete={() => handleCommentDelete(item.id)}
                   />
                 ),
               )}

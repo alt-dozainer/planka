@@ -127,7 +127,8 @@ const mergeProps = (stateProps, dispatchProps) => ({
   ...stateProps,
   ...omit(dispatchProps, 'push'),
   onClose: () => {
-    const view = window.location.search.indexOf('v=events') >= 0 ? `?v=events` : ``;
+    // console.log('close card', stateProps);
+    const view = window.location.search.indexOf('v=events') >= 0 ? window.location.search : ``;
     return dispatchProps.push(Paths.BOARDS.replace(':id', `${stateProps.boardId}${view}`));
   },
 });

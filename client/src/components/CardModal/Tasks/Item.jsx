@@ -27,6 +27,7 @@ const Item = React.memo(
     onDelete,
     description,
     options,
+    isCurrentUserManager,
   }) => {
     const nameEdit = useRef(null);
 
@@ -52,8 +53,9 @@ const Item = React.memo(
     const handleToggleChange = useCallback(() => {
       onUpdate({
         isCompleted: !isCompleted,
+        name,
       });
-    }, [isCompleted, onUpdate]);
+    }, [isCompleted, onUpdate, name]);
 
     const handleNameEdit = useCallback(() => {
       nameEdit.current.open();
@@ -88,6 +90,7 @@ const Item = React.memo(
                 defaultValue={getValue}
                 onUpdate={handleNameUpdate}
                 options={options}
+                isCurrentUserManager={isCurrentUserManager}
               >
                 <div className={classNames(canEdit && styles.contentHoverable)}>
                   {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
@@ -110,24 +113,31 @@ const Item = React.memo(
                             display: 'inline',
                             background: 'none',
                           }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.location.pathname = Paths.CARDS.replace(':id', getId);
+                          }}
                         >
                           <Icon fitted name="linkify" size="small" />
                         </Link>
                       )}
                     </span>
                     {/* <span className="task-description">{description}</span> */}
-                    <Input
-                      id={`task-description-${id}`}
-                      className={classNames(
-                        'task-description-edit',
-                        'task-description',
-                        getDescription
-                          ? `${globalStyles.backgroundEggYellow} input-transparent`
-                          : '',
-                      )}
-                      value={getDescription || description}
-                      onChange={(e) => handleNameUpdate(e.target.value, 'description')}
-                    />
+                    {isCurrentUserManager && (
+                      <Input
+                        id={`task-description-${id}`}
+                        className={classNames(
+                          'task-description-edit',
+                          'task-description',
+                          getDescription
+                            ? `${globalStyles.backgroundEggYellow} input-transparent`
+                            : '',
+                        )}
+                        value={getDescription || description}
+                        onChange={(e) => handleNameUpdate(e.target.value, 'description')}
+                      />
+                    )}
                   </span>
                   {isPersisted && canEdit && (
                     <ActionsPopup onNameEdit={handleNameEdit} onDelete={onDelete}>
@@ -162,10 +172,12 @@ Item.propTypes = {
   onDelete: PropTypes.func.isRequired,
   description: PropTypes.string,
   options: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+  isCurrentUserManager: PropTypes.bool,
 };
 
 Item.defaultProps = {
   description: '',
+  isCurrentUserManager: false,
 };
 
 export default Item;

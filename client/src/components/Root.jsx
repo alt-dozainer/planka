@@ -16,6 +16,8 @@ import '../lib/custom-ui/styles.css';
 import '../assets/css/font-awesome.css';
 import '../styles.module.scss';
 import '../lib/custom-ui/calendar.css';
+import 'react-big-calendar/lib/sass/styles.scss';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss'; // if using DnD
 
 function Root({ store, history }) {
   return (

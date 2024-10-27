@@ -234,6 +234,28 @@ const CardModal = React.memo(
       }
     }, [getBoardByName, fetchBoard, t, taskOptionsBoardId]);
 
+    const getDescription = () => {
+      let p = {};
+      try {
+        p = JSON.parse(description || '{}');
+      } catch (e) {
+        p = { description };
+      }
+      return p.description;
+    };
+
+    const onTaskUpdateAndComment = (...params) => {
+      const [, data] = params;
+      onTaskUpdate(...params);
+      const taskName = data.name.replace(/ \[\d+\]/, '');
+      if (taskName && data.isCompleted) {
+        onCommentActivityCreate({
+          text: `${taskName}`,
+          metaType: 'taskDone',
+        });
+      }
+    };
+
     const contentNode = (
       <Grid className={styles.grid}>
         <Grid.Row className={styles.headerPadding}>
@@ -417,14 +439,18 @@ const CardModal = React.memo(
                   <Icon name="align justify" className={styles.moduleIcon} />
                   <div className={styles.moduleHeader}>{t('common.description')}</div>
                   {canEdit ? (
-                    <DescriptionEdit defaultValue={description} onUpdate={handleDescriptionUpdate}>
-                      {description ? (
+                    <DescriptionEdit
+                      defaultValue={description}
+                      onUpdate={handleDescriptionUpdate}
+                      isCurrentUserManager={canEditAllCommentActivities}
+                    >
+                      {getDescription() ? (
                         <button
                           type="button"
                           className={classNames(styles.descriptionText, styles.cursorPointer)}
                         >
                           <Markdown linkStopPropagation linkTarget="_blank">
-                            {description}
+                            {getDescription()}
                           </Markdown>
                         </button>
                       ) : (
@@ -438,7 +464,7 @@ const CardModal = React.memo(
                   ) : (
                     <div className={styles.descriptionText}>
                       <Markdown linkStopPropagation linkTarget="_blank">
-                        {description}
+                        {getDescription()}
                       </Markdown>
                     </div>
                   )}
@@ -456,9 +482,10 @@ const CardModal = React.memo(
                     optionsId={taskOptionsBoardId}
                     canEdit={canEdit}
                     onCreate={onTaskCreate}
-                    onUpdate={onTaskUpdate}
+                    onUpdate={onTaskUpdateAndComment}
                     onMove={onTaskMove}
                     onDelete={onTaskDelete}
+                    isCurrentUserManager={canEditAllCommentActivities}
                   />
                 </div>
               </div>

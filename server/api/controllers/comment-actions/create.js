@@ -18,6 +18,10 @@ module.exports = {
       type: 'string',
       required: true,
     },
+    metaType: {
+      type: 'string',
+      required: true,
+    },
   },
 
   exits: {
@@ -51,7 +55,7 @@ module.exports = {
 
     const values = {
       type: Action.Types.COMMENT_CARD,
-      data: _.pick(inputs, ['text']),
+      data: _.pick(inputs, ['text', 'metaType']),
     };
 
     const action = await sails.helpers.actions.createOne.with({

@@ -12,7 +12,17 @@ import Add from './Add';
 import styles from './Tasks.module.scss';
 
 const Tasks = React.memo(
-  ({ items, canEdit, onCreate, onUpdate, onMove, onDelete, options, optionsId }) => {
+  ({
+    items,
+    canEdit,
+    onCreate,
+    onUpdate,
+    onMove,
+    onDelete,
+    options,
+    optionsId,
+    isCurrentUserManager,
+  }) => {
     const [t] = useTranslation();
 
     const handleDragStart = useCallback(() => {
@@ -96,10 +106,15 @@ const Tasks = React.memo(
                     onDelete={() => handleDelete(item.id)}
                     options={options}
                     optionsId={optionsId}
+                    isCurrentUserManager={isCurrentUserManager}
                   />
                 ))}
                 <span className="tasks-footer">
-                  {t('total')} <span className="total-value">{getTotal}</span>
+                  {!!items.length && isCurrentUserManager && (
+                    <p>
+                      {t('total')} <span className="total-value">{getTotal}</span>
+                    </p>
+                  )}
                 </span>
                 {placeholder}
                 {canEdit && (
@@ -129,10 +144,12 @@ Tasks.propTypes = {
   onDelete: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
   optionsId: PropTypes.string,
+  isCurrentUserManager: PropTypes.bool,
 };
 
 Tasks.defaultProps = {
   optionsId: undefined,
+  isCurrentUserManager: false,
 };
 
 export default Tasks;

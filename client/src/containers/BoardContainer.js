@@ -13,6 +13,8 @@ const mapStateToProps = (state) => {
   const events = selectors.selectAllCardsForCurrentBoard(state);
   const selectListById = (name) => selectors.selectListByNameForCurrentBoard(state, name);
   const selectBoardByName = (name) => selectors.selectBoardByName(state, name);
+  const allLabels = selectors.selectLabelsForCurrentBoard(state);
+  const filterText = selectors.selectFilterTextForCurrentBoard(state);
 
   const isCurrentUserEditor =
     !!currentUserMembership && currentUserMembership.role === BoardMembershipRoles.EDITOR;
@@ -24,6 +26,8 @@ const mapStateToProps = (state) => {
     events,
     getListByName: selectListById,
     getBoardByName: selectBoardByName,
+    allLabels,
+    filterText,
   };
 };
 
@@ -35,6 +39,7 @@ const mapDispatchToProps = (dispatch) =>
       onCardMove: entryActions.moveCard,
       onCardCreate: (listId, data, autoOpen) => entryActions.createCard(listId, data, autoOpen),
       onCardUpdate: (cardId, data) => entryActions.updateCard(cardId, data),
+      onLabelAdd: (labelId) => entryActions.addLabelToCurrentCard(labelId),
     },
     dispatch,
   );
