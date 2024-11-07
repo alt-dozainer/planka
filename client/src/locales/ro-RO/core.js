@@ -92,7 +92,7 @@ export default {
       email: 'E-mail',
       emailAlreadyInUse: 'E-mail deja utilizat',
       enterCardTitle: 'Introduceți titlul cardului... [Ctrl+Enter] pentru a se deschide automat.',
-      enterDescription: 'Introduceți descrierea...',
+      enterDescription: 'Introduceți observațiile...',
       enterFilename: 'Introduceți numele fișierului',
       enterListTitle: 'Introduceți titlul listei...',
       enterProjectTitle: 'Introduceți titlul proiectului',

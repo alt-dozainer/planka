@@ -67,6 +67,7 @@ const NameField = React.memo(({ defaultValue, onUpdate }) => {
       onChange={handleChange}
       onBlur={handleBlur}
       autoFocus={value === scheduled}
+      // tabIndex="1" // eslint-disable-line
     />
   );
 });

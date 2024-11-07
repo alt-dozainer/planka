@@ -27,6 +27,7 @@ import ListContainer from '../../containers/ListContainer';
 import StatusColors, { getTranslationKey } from '../../constants/StatusColors';
 import CardModalContainer from '../../containers/CardModalContainer';
 import ListAdd from './ListAdd';
+import Tasks from '../Card/Tasks';
 import { ReactComponent as PlusMathIcon } from '../../assets/images/plus-math-icon.svg';
 
 import styles from './Board.module.scss';
@@ -68,9 +69,9 @@ const formats = {
 };
 
 const resourceMap = [
-  { resourceId: 1, resourceTitle: 'Colantări' },
-  { resourceId: 2, resourceTitle: 'Folii' },
-  { resourceId: 3, resourceTitle: 'Faruri' },
+  { resourceId: 1, resourceTitle: 'Folie/PPF/Colantări/Diverse' },
+  { resourceId: 2, resourceTitle: 'Faruri' },
+  { resourceId: 3, resourceTitle: 'Detailing' },
 ];
 
 // const { search } = window.location;
@@ -98,7 +99,7 @@ const createEvent = ({ e, t, getListByName, onCardCreate, time, day }) => {
   }
 };
 
-function Events({ events, resourceId, initialView }) {
+function Events({ events, resourceId, initialView, tasks }) {
   const { i18n } = useTranslation();
   const statuses = i18n.options.resources[i18n.language].translation.status;
 
@@ -115,7 +116,7 @@ function Events({ events, resourceId, initialView }) {
   const getEventColor = (event) => {
     const colorFromLabel = event.extendedProps?.labels?.length
       ? globalStyles[
-          `background${upperFirst(camelCase(event.extendedProps?.labels?.[(event.extendedProps?.labels?.length || 1) - 1]?.color))}`
+          `background${upperFirst(camelCase(event.extendedProps?.labels?.[event.extendedProps?.labels?.findLastIndex((label) => label.name.indexOf('>') === 0)]?.color))}`
         ]
       : globalStyles[StatusColors[getTranslationKey(statuses, event.extendedProps?.listName)]];
     return colorFromLabel;
@@ -154,6 +155,8 @@ function Events({ events, resourceId, initialView }) {
                     </span>
                   ))}
                 </span>
+                {JSON.stringify(tasks)}
+                <Tasks items={tasks(event.id)} noProgress />
                 <div className="description">{getDescription(event.description)}</div>
                 <div className="circle" />
               </Link>
@@ -170,6 +173,7 @@ Events.propTypes = {
   resourceId: PropTypes.number.isRequired,
   // getListByName: PropTypes.func.isRequired,
   initialView: PropTypes.string.isRequired,
+  tasks: PropTypes.func.isRequired,
 };
 
 const onClickCalendar = ({ e, t, onCardCreate, onCardUpdate, getListByName, day }) => {
@@ -195,7 +199,7 @@ const onClickResource = ({ e, t, onCardCreate, onCardUpdate, getListByName }) =>
   createEvent({ e, t, onCardCreate, onCardUpdate, getListByName, time: defaultTime });
 };
 
-function EventAgenda({ event: ev, getListByName, onCardCreate, onCardUpdate, initialView }) {
+function EventAgenda({ event: ev, getListByName, onCardCreate, onCardUpdate, initialView, tasks }) {
   const { t } = useTranslation();
 
   return (
@@ -216,18 +220,21 @@ function EventAgenda({ event: ev, getListByName, onCardCreate, onCardUpdate, ini
           resourceId={1}
           getListByName={getListByName}
           initialView={initialView}
+          tasks={tasks}
         />
         <Events
           events={ev.events || []}
           resourceId={2}
           getListByName={getListByName}
           initialView={initialView}
+          tasks={tasks}
         />
         <Events
           events={ev.events || []}
           resourceId={3}
           getListByName={getListByName}
           initialView={initialView}
+          tasks={tasks}
         />
       </React.Fragment>
     </div>
@@ -239,6 +246,7 @@ EventAgenda.propTypes = {
   onCardCreate: PropTypes.func.isRequired,
   onCardUpdate: PropTypes.func.isRequired,
   initialView: PropTypes.string.isRequired,
+  tasks: PropTypes.func.isRequired,
 };
 
 function AgendaTime(props) {
@@ -316,12 +324,19 @@ const mapEvents2 = (events) =>
 
 const mapEvents3 = (events) =>
   events.reduce((groups, event) => {
-    const existingGroup = groups.find(
-      (group) =>
+    const existingGroup = groups.find((group) => {
+      // group.es.setMinutes(0);
+      group.es.setSeconds(0);
+      group.es.setMilliseconds(0);
+      // event.start.setMinutes(0);
+      event.start.setSeconds(0);
+      event.start.setMilliseconds(0);
+      return (
         group.es.getTime() === event.start.getTime() &&
         (group.start === moment(event.start).format('HH:mm') ||
-          (group.start === 'allday' && !event.start)),
-    );
+          (group.start === 'allday' && !event.start))
+      );
+    });
 
     if (existingGroup) {
       existingGroup.events.push(event);
@@ -356,6 +371,7 @@ const Board = React.memo(
     // onLabelAdd,
     // allLabels,
     filterText,
+    selectTasks,
   }) => {
     const { t } = useTranslation();
     const { search: searchParams } = useLocation();
@@ -669,50 +685,97 @@ const Board = React.memo(
     );
 
     const insertEmptyEvent = (e) => {
-      const eee = new Date(e.getTime());
-      eee.setHours(0);
-      eee.setMinutes(0);
-      eee.setSeconds(0);
-      eee.setMilliseconds(0);
+      // const eee = new Date(e.getTime());
+      // eee.setHours(0);
+      // eee.setMinutes(0);
+      // eee.setSeconds(0);
+      // eee.setMilliseconds(0);
 
-      const evs = events3.filter((event) => {
-        if (event.es) {
-          const ev = new Date(event.es.getTime());
-          ev.setHours(0);
-          ev.setMinutes(0);
-          ev.setSeconds(0);
-          ev.setMilliseconds(0);
-          return ev.getTime() === eee.getTime();
+      // const evs = events3.filter((event) => {
+      //   if (event.es) {
+      //     const ev = new Date(event.es.getTime());
+      //     ev.setHours(0);
+      //     ev.setMinutes(0);
+      //     ev.setSeconds(0);
+      //     ev.setMilliseconds(0);
+      //     return ev.getTime() === eee.getTime();
+      //   }
+      //   return false;
+      // });
+
+      const workingHours = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+      const ev2 = [...events3];
+
+      workingHours.forEach((slot) => {
+        const currentSlot = new Date(e.getTime());
+        currentSlot.setHours(slot);
+        currentSlot.setMinutes(0);
+        currentSlot.setSeconds(0);
+        currentSlot.setMilliseconds(0);
+
+        const evs = events3.filter((event) => {
+          if (event.es) {
+            const ev = new Date(event.es.getTime());
+            // ev.setHours(0);
+            // ev.setMinutes(0);
+            ev.setSeconds(0);
+            ev.setMilliseconds(0);
+            return ev.getTime() === currentSlot.getTime();
+          }
+          return false;
+        });
+
+        if (!evs.length) {
+          if (!evs[0]?.title !== 'Programează') {
+            const ee = currentSlot;
+            ev2.push({
+              id: ev2.length + 1,
+              title: 'Programează',
+              es: ee,
+              start: moment(ee).format('HH:mm'),
+              end: ee ? new Date(ee.getTime()).setHours(ee.getHours() + 0) : new Date(),
+              events: [
+                {
+                  id: ev2.length + 2,
+                  resourceId: 1,
+                  title: 'Programează',
+                  es: ee,
+                  start: ee,
+                  end: ee ? new Date(ee.getTime()).setHours(ee.getHours() + 0) : new Date(),
+                },
+              ],
+            });
+          }
         }
-        return false;
       });
+      setCalendarEvents(ev2);
 
-      if (!evs.length) {
-        const ev2 = [...events3];
-        if (!evs[0]?.title !== 'Programează') {
-          const ee = new Date(e.getTime());
-          ee.setHours(8);
-          ee.setMinutes(0);
-          ev2.push({
-            id: ev2.length + 1,
-            title: 'Programează',
-            es: ee,
-            start: moment(ee).format('HH:mm'),
-            end: ee ? new Date(ee.getTime()).setHours(ee.getHours() + 0) : new Date(),
-            events: [
-              {
-                id: ev2.length + 2,
-                resourceId: 1,
-                title: 'Programează',
-                es: ee,
-                start: ee,
-                end: ee ? new Date(ee.getTime()).setHours(ee.getHours() + 0) : new Date(),
-              },
-            ],
-          });
-        }
-        setCalendarEvents(ev2);
-      }
+      // if (!evs.length) {
+      //   const ev2 = [...events3];
+      //   if (!evs[0]?.title !== 'Programează') {
+      //     const ee = new Date(e.getTime());
+      //     ee.setHours(8);
+      //     ee.setMinutes(0);
+      //     ev2.push({
+      //       id: ev2.length + 1,
+      //       title: 'Programează',
+      //       es: ee,
+      //       start: moment(ee).format('HH:mm'),
+      //       end: ee ? new Date(ee.getTime()).setHours(ee.getHours() + 0) : new Date(),
+      //       events: [
+      //         {
+      //           id: ev2.length + 2,
+      //           resourceId: 1,
+      //           title: 'Programează',
+      //           es: ee,
+      //           start: ee,
+      //           end: ee ? new Date(ee.getTime()).setHours(ee.getHours() + 0) : new Date(),
+      //         },
+      //       ],
+      //     });
+      //   }
+      //   setCalendarEvents(ev2);
+      // }
     };
 
     const onChangeDate = (e) => {
@@ -733,7 +796,7 @@ const Board = React.memo(
         }, 10);
         setTimeout(() => {
           insertEmptyEvent(e);
-        }, 20);
+        }, 0);
       }
     };
 
@@ -830,17 +893,45 @@ const Board = React.memo(
             components={{
               agenda: {
                 event: (props) =>
-                  EventAgenda({ ...props, getListByName, onCardCreate, onCardUpdate, initialView }),
+                  EventAgenda({
+                    ...props,
+                    tasks: selectTasks,
+                    getListByName,
+                    onCardCreate,
+                    onCardUpdate,
+                    initialView,
+                  }),
                 time: (props) =>
-                  AgendaTime({ ...props, getListByName, onCardCreate, onCardUpdate, initialView }),
+                  AgendaTime({
+                    ...props,
+                    tasks: selectTasks,
+                    getListByName,
+                    onCardCreate,
+                    onCardUpdate,
+                    initialView,
+                  }),
               },
               month: {
                 event: (props) =>
-                  EventAgenda({ ...props, getListByName, onCardCreate, onCardUpdate, initialView }),
+                  EventAgenda({
+                    ...props,
+                    tasks: selectTasks,
+                    getListByName,
+                    onCardCreate,
+                    onCardUpdate,
+                    initialView,
+                  }),
               },
               week: {
                 event: (props) =>
-                  EventAgenda({ ...props, getListByName, onCardCreate, onCardUpdate, initialView }),
+                  EventAgenda({
+                    ...props,
+                    tasks: selectTasks,
+                    getListByName,
+                    onCardCreate,
+                    onCardUpdate,
+                    initialView,
+                  }),
               },
               // agenda: CustomAgenda,
             }}
@@ -918,6 +1009,7 @@ Board.propTypes = {
   allLabels: PropTypes.array, // eslint-disable-line react/forbid-prop-types
   onLabelAdd: PropTypes.func,
   filterText: PropTypes.string,
+  selectTasks: PropTypes.func,
 };
 
 Board.defaultProps = {
@@ -926,6 +1018,7 @@ Board.defaultProps = {
   allLabels: [],
   onLabelAdd: () => undefined,
   filterText: '',
+  selectTasks: () => [],
 };
 
 export default Board;

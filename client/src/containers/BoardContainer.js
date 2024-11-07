@@ -7,6 +7,7 @@ import { BoardMembershipRoles } from '../constants/Enums';
 import Board from '../components/Board';
 
 const mapStateToProps = (state) => {
+  const selectTasksByCardId = selectors.makeSelectTasksByCardId();
   const { cardId } = selectors.selectPath(state);
   const currentUserMembership = selectors.selectCurrentUserMembershipForCurrentBoard(state);
   const listIds = selectors.selectListIdsForCurrentBoard(state);
@@ -28,6 +29,7 @@ const mapStateToProps = (state) => {
     getBoardByName: selectBoardByName,
     allLabels,
     filterText,
+    selectTasks: (_cardId) => selectTasksByCardId(state, _cardId),
   };
 };
 

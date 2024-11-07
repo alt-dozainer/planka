@@ -59,17 +59,24 @@
     padding-bottom: 6px;
     padding-left: 14px;
     text-overflow: ellipsis;
+    padding-top: 2px;
+    border-top: 1px solid rgba(0,0,0,0.2);
 
     &:before {
-      content: "–";
+      content: "\0203A";
       position: absolute;
-      left: 10px;
+      left: 4px;
     }
   }
 
   .taskCompleted {
-    color: #aaa;
-    text-decoration: line-through;
+    // color: #aaa;
+    color: #009900;
+    // text-decoration: line-through;
+    // text-shadow: 1px 1px 1px #000;
+    &:before {
+      content: "\02713";
+    }
   }
 
   .tasks {
@@ -77,5 +84,7 @@
     list-style: none;
     margin: -2px 0 0;
     padding-left: 0;
+    margin-left: -10px;
+    background: rgba(255, 255, 255, 0.6);
   }
 }

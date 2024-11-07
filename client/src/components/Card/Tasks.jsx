@@ -8,7 +8,7 @@ import Linkify from '../Linkify';
 
 import styles from './Tasks.module.scss';
 
-const Tasks = React.memo(({ items }) => {
+const Tasks = React.memo(({ items, noProgress }) => {
   const [isOpened, toggleOpened] = useToggle(true);
 
   const handleToggleClick = useCallback(
@@ -27,21 +27,28 @@ const Tasks = React.memo(({ items }) => {
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,
                                    jsx-a11y/no-static-element-interactions */}
       <div className={styles.button} onClick={handleToggleClick}>
-        <span className={styles.progressWrapper}>
-          <Progress
-            autoSuccess
-            value={completedItems.length}
-            total={items.length}
-            color="blue"
-            size="tiny"
-            className={styles.progress}
-          />
-        </span>
-        <span
-          className={classNames(styles.count, isOpened ? styles.countOpened : styles.countClosed)}
-        >
-          {completedItems.length}/{items.length}
-        </span>
+        {!noProgress && (
+          <>
+            <span className={styles.progressWrapper}>
+              <Progress
+                autoSuccess
+                value={completedItems.length}
+                total={items.length}
+                color="blue"
+                size="tiny"
+                className={styles.progress}
+              />
+            </span>
+            <span
+              className={classNames(
+                styles.count,
+                isOpened ? styles.countOpened : styles.countClosed,
+              )}
+            >
+              {completedItems.length}/{items.length}
+            </span>
+          </>
+        )}
       </div>
       {isOpened && (
         <ul className={styles.tasks}>
@@ -61,6 +68,11 @@ const Tasks = React.memo(({ items }) => {
 
 Tasks.propTypes = {
   items: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+  noProgress: PropTypes.bool,
+};
+
+Tasks.defaultProps = {
+  noProgress: false,
 };
 
 export default Tasks;

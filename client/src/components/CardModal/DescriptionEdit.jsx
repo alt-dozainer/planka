@@ -10,8 +10,8 @@ import styles from './DescriptionEdit.module.scss';
 const DescriptionEdit = React.forwardRef(
   ({ children, defaultValue, onUpdate, isCurrentUserManager }, ref) => {
     const [t] = useTranslation();
-    const [isOpened, setIsOpened] = useState(false);
-    const [value, setValue] = useState(null);
+    const [isOpened, setIsOpened] = useState(true);
+    const [value, setValue] = useState(defaultValue);
 
     const open = useCallback(() => {
       setIsOpened(true);
@@ -126,23 +126,6 @@ const DescriptionEdit = React.forwardRef(
         {isCurrentUserManager && (
           <>
             <div className="field">
-              <Label pointing="right">Telefon</Label>
-              <TextArea
-                // ref={textField}
-                as={TextareaAutosize}
-                name="phoneNo"
-                value={getJSON('phoneNo')}
-                placeholder="Număr telefon"
-                minRows={1}
-                spellCheck={false}
-                className={styles.field}
-                // onFocus={handleFieldFocus}
-                // onKeyDown={handleFieldKeyDown}
-                onChange={(v) => setJSON(v, 'phoneNo')}
-                // onBlur={handleFieldBlur}
-              />
-            </div>
-            <div className="field">
               <Label pointing="right">Client</Label>
               <TextArea
                 // ref={textField}
@@ -157,9 +140,28 @@ const DescriptionEdit = React.forwardRef(
                 // onKeyDown={handleFieldKeyDown}
                 onChange={(v) => setJSON(v, 'clientName')}
                 // onBlur={handleFieldBlur}
+                tabIndex="2" // eslint-disable-line
               />
             </div>
             <div className="field">
+              <Label pointing="right">Telefon</Label>
+              <TextArea
+                // ref={textField}
+                as={TextareaAutosize}
+                name="phoneNo"
+                value={getJSON('phoneNo')}
+                placeholder="Număr telefon"
+                minRows={1}
+                spellCheck={false}
+                className={styles.field}
+                // onFocus={handleFieldFocus}
+                // onKeyDown={handleFieldKeyDown}
+                onChange={(v) => setJSON(v, 'phoneNo')}
+                // onBlur={handleFieldBlur}
+                tabIndex="3" // eslint-disable-line
+              />
+            </div>
+            {/* <div className="field">
               <Label pointing="right">Mașină</Label>
               <TextArea
                 // ref={textField}
@@ -175,8 +177,8 @@ const DescriptionEdit = React.forwardRef(
                 onChange={(v) => setJSON(v, 'carMake')}
                 // onBlur={handleFieldBlur}
               />
-            </div>
-            <Label pointing="below">Descriere</Label>
+            </div> */}
+            <Label pointing="below">Observații</Label>
           </>
         )}
         <SimpleMDE
@@ -186,6 +188,7 @@ const DescriptionEdit = React.forwardRef(
           className={styles.field}
           onKeyDown={handleFieldKeyDown}
           onChange={(v) => setJSON(v, 'description')}
+          tabIndex="4" // eslint-disable-line
         />
         <div className={styles.controls}>
           <Button positive content={t('action.save')} />

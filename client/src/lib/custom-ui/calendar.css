@@ -247,7 +247,8 @@
 
 .agenda {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+/*  grid-template-columns: repeat(3, 1fr);*/
+  grid-template-columns: 3fr 1fr 2fr;
   gap: 10px 0;
   padding-top: 10px;
 
@@ -306,6 +307,7 @@
   padding-left: 5px;
   border-left: 1px solid rgba(0, 0, 0, 0.2);
   line-height: 1.1em;
+  color: #990000;
 }
 .rbc-agenda-view .rbc-header:nth-child(3) {
   text-indent: -9999px;
@@ -430,4 +432,33 @@ tr:has(.rbc-agenda-time-cell) + tr:has(.rbc-agenda-date-cell) ~ tr {
 
 .rbc-time-view .rbc-events-container > .rbc-event .events .rbc-event {
   margin-left: 2px;
+}
+
+
+/* */
+/*.agenda .header[data-resource-id="1"],
+.agenda .container[data-resource-id="1"] {
+  width: 60%;
+}
+
+.agenda .header[data-resource-id="2"],
+.agenda .container[data-resource-id="2"] {
+  width: 10%;
+}
+
+.agenda .header[data-resource-id="3"],
+.agenda .container[data-resource-id="3"] {
+  width: 30%;
+}*/
+
+.agenda div[data-resource-id="1"] .rbc-event {
+  width: 70%;
+}
+
+.agenda div[data-resource-id="2"] .rbc-event .event-labels {
+    float: right;
+    max-width: 130px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
