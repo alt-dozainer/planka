@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
-import TextareaAutosize from 'react-textarea-autosize';
+// import TextareaAutosize from 'react-textarea-autosize';
 import { TextArea, Dropdown } from 'semantic-ui-react';
 import { useDidUpdate, usePrevious } from '../../lib/hooks';
 
@@ -15,7 +15,7 @@ const NameField = React.memo(({ defaultValue, onUpdate, onBlur }) => {
   const { t } = useTranslation();
   const prevDefaultValue = usePrevious(defaultValue);
   const currentValue = useRef(defaultValue);
-  const [value, handleChange, setValue] = useField(defaultValue);
+  const [value, /* handleChange, */ setValue] = useField(defaultValue);
   const [options, setOptions] = useState([{ text: defaultValue, value: defaultValue }]);
 
   const nameField = useRef();
@@ -24,15 +24,15 @@ const NameField = React.memo(({ defaultValue, onUpdate, onBlur }) => {
 
   const scheduled = t('scheduled');
 
-  const handleFocus = useCallback(
-    (e) => {
-      isFocused.current = true;
-      if (value === scheduled) {
-        e.target.select();
-      }
-    },
-    [value, scheduled],
-  );
+  // const handleFocus = useCallback(
+  //   (e) => {
+  //     isFocused.current = true;
+  //     if (value === scheduled) {
+  //       e.target.select();
+  //     }
+  //   },
+  //   [value, scheduled],
+  // );
 
   const handleKeyDown = useCallback((event) => {
     if (event.key === 'Enter') {
@@ -132,7 +132,7 @@ const NameField = React.memo(({ defaultValue, onUpdate, onBlur }) => {
         }}
         // onChange={handleChange}
         onBlur={handleBlur}
-        search={(opts, q) => {
+        search={(opts) => {
           const addition = opts.find((o) => o.key === 'addition');
           const r = opts.filter((o) => o.key !== 'addition');
           if (addition) {
