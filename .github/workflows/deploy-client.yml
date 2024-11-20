@@ -45,6 +45,7 @@ jobs:
     - uses: cross-the-world/ssh-scp-ssh-pipelines@latest
       with:
         host: ${{ secrets.HOST }}
+        port: 7822
         user: ${{ secrets.USERNAME }}
         pass: ${{ secrets.PASSWORD }}
         first_ssh: |
