@@ -56,6 +56,11 @@ const Tasks = React.memo(
 
     const completedItems = items.filter((item) => item.isCompleted);
 
+    const filteredOptions = options.map((option) => ({
+      ...option,
+      description: isCurrentUserManager ? option.description : '',
+    }));
+
     const getDescriptionForItem = (item) => {
       return (
         options.find((option) => option.text === item.name)?.description ||
@@ -118,7 +123,7 @@ const Tasks = React.memo(
                 </span>
                 {placeholder}
                 {canEdit && (
-                  <Add onCreate={onCreate} options={options} optionsId={optionsId}>
+                  <Add onCreate={onCreate} options={filteredOptions} optionsId={optionsId}>
                     <button type="button" className={styles.taskButton}>
                       <span className={styles.taskButtonText}>
                         {items.length > 0 ? t('action.addAnotherTask') : t('action.addTask')}

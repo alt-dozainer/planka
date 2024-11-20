@@ -94,7 +94,7 @@ const NameEdit = React.forwardRef(
           ref={field}
           value={getValue || value}
           placeholder={getValue || value}
-          // className={styles.field}
+          className={styles.dropdown}
           // onKeyDown={handleFieldKeyDown}
           selection
           allowAdditions

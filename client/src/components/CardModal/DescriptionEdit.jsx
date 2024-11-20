@@ -1,4 +1,4 @@
-import React, { useCallback, useImperativeHandle, useMemo, useState } from 'react';
+import React, { useCallback, useImperativeHandle, useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Button, Form, TextArea, Label } from 'semantic-ui-react';
@@ -12,6 +12,10 @@ const DescriptionEdit = React.forwardRef(
     const [t] = useTranslation();
     const [isOpened, setIsOpened] = useState(true);
     const [value, setValue] = useState(defaultValue);
+
+    const firstField = useRef(null);
+    const secondField = useRef(null);
+    const editorRef = useRef(null);
 
     const open = useCallback(() => {
       setIsOpened(true);
@@ -34,6 +38,8 @@ const DescriptionEdit = React.forwardRef(
       () => ({
         open,
         close,
+        firstField,
+        secondField,
       }),
       [open, close],
     );
@@ -44,8 +50,18 @@ const DescriptionEdit = React.forwardRef(
       }
     }, [open]);
 
+    const focusEditor = () => {
+      const editor = editorRef.current?.querySelector('.CodeMirror textarea');
+      if (editor) {
+        editor.focus();
+      }
+    };
+
     const handleFieldKeyDown = useCallback(
       (event) => {
+        // if (event.key === 'Tab') {
+        //   focusEditor();
+        // }
         if (event.ctrlKey && event.key === 'Enter') {
           close();
         }
@@ -60,7 +76,7 @@ const DescriptionEdit = React.forwardRef(
     const mdEditorOptions = useMemo(
       () => ({
         autoDownloadFontAwesome: false,
-        autofocus: true,
+        autofocus: false,
         spellChecker: false,
         status: false,
         toolbar: [
@@ -120,6 +136,14 @@ const DescriptionEdit = React.forwardRef(
       setValue(defaultValue);
     };
 
+    const tabToDescription = (e) => {
+      if (e.key === 'Tab') {
+        setTimeout(() => {
+          focusEditor(e);
+        }, 100);
+      }
+    };
+
     return (
       <Form onSubmit={handleSubmit}>
         {/* {JSON.stringify(value)} */}
@@ -136,11 +160,9 @@ const DescriptionEdit = React.forwardRef(
                 minRows={1}
                 spellCheck={false}
                 className={styles.field}
-                // onFocus={handleFieldFocus}
-                // onKeyDown={handleFieldKeyDown}
                 onChange={(v) => setJSON(v, 'clientName')}
-                // onBlur={handleFieldBlur}
-                tabIndex="2" // eslint-disable-line
+                tabIndex={1} // eslint-disable-line
+                ref={firstField}
               />
             </div>
             <div className="field">
@@ -154,11 +176,10 @@ const DescriptionEdit = React.forwardRef(
                 minRows={1}
                 spellCheck={false}
                 className={styles.field}
-                // onFocus={handleFieldFocus}
-                // onKeyDown={handleFieldKeyDown}
                 onChange={(v) => setJSON(v, 'phoneNo')}
-                // onBlur={handleFieldBlur}
-                tabIndex="3" // eslint-disable-line
+                tabIndex={2} // eslint-disable-line
+                onKeyDown={tabToDescription}
+                ref={secondField}
               />
             </div>
             {/* <div className="field">
@@ -172,10 +193,7 @@ const DescriptionEdit = React.forwardRef(
                 minRows={1}
                 spellCheck={false}
                 className={styles.field}
-                // onFocus={handleFieldFocus}
-                // onKeyDown={handleFieldKeyDown}
                 onChange={(v) => setJSON(v, 'carMake')}
-                // onBlur={handleFieldBlur}
               />
             </div> */}
             <Label pointing="below">Observații</Label>
@@ -188,7 +206,8 @@ const DescriptionEdit = React.forwardRef(
           className={styles.field}
           onKeyDown={handleFieldKeyDown}
           onChange={(v) => setJSON(v, 'description')}
-          tabIndex="4" // eslint-disable-line
+          tabIndex={3} // eslint-disable-line
+          ref={editorRef}
         />
         <div className={styles.controls}>
           <Button positive content={t('action.save')} />

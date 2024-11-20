@@ -25,6 +25,7 @@ const List = React.memo(
     name,
     isPersisted,
     cardIds,
+    isCurrentUserManager,
     canEdit,
     onUpdate,
     onDelete,
@@ -157,7 +158,7 @@ const List = React.memo(
               >
                 <div className={styles.cardsOuterWrapper}>{cardsNode}</div>
               </div>
-              {!isAddCardOpened && canEdit && (
+              {!isAddCardOpened && canEdit && isCurrentUserManager && (
                 <button
                   type="button"
                   disabled={!isPersisted}
@@ -185,6 +186,7 @@ List.propTypes = {
   name: PropTypes.string.isRequired,
   isPersisted: PropTypes.bool.isRequired,
   cardIds: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+  isCurrentUserManager: PropTypes.bool.isRequired,
   canEdit: PropTypes.bool.isRequired,
   onUpdate: PropTypes.func.isRequired,
   onSort: PropTypes.func.isRequired,

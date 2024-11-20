@@ -180,10 +180,13 @@
 }
 .ui.search.dropdown > .text {
   width: calc(100% - 30px);
-  padding-left: 15px;
+  padding-left: 4px;
   position: absolute;
 }
-.ui.search.selection.dropdown > .text {
+.ui.search.dropdown.tasks-dropdown > .text {
+  padding-left: 15px;
+}
+.ui.search.selection.dropdown.tasks-dropdown > .text {
   margin-top: -11px;
 }
 .ui.search.dropdown > .menu {

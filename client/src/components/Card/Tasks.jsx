@@ -20,7 +20,7 @@ const Tasks = React.memo(({ items, noProgress }) => {
     [toggleOpened],
   );
 
-  const completedItems = items.filter((item) => item.isCompleted);
+  const completedItems = items?.filter((item) => item.isCompleted);
 
   return (
     <>
@@ -52,7 +52,7 @@ const Tasks = React.memo(({ items, noProgress }) => {
       </div>
       {isOpened && (
         <ul className={styles.tasks}>
-          {items.map((item) => (
+          {(items || []).map((item) => (
             <li
               key={item.id}
               className={classNames(styles.task, item.isCompleted && styles.taskCompleted)}

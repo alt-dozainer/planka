@@ -114,12 +114,14 @@ function Events({ events, resourceId, initialView, tasks }) {
   };
 
   const getEventColor = (event) => {
+    const defaultColor =
+      globalStyles[StatusColors[getTranslationKey(statuses, event.extendedProps?.listName)]];
     const colorFromLabel = event.extendedProps?.labels?.length
       ? globalStyles[
           `background${upperFirst(camelCase(event.extendedProps?.labels?.[event.extendedProps?.labels?.findLastIndex((label) => label.name.indexOf('>') === 0)]?.color))}`
         ]
-      : globalStyles[StatusColors[getTranslationKey(statuses, event.extendedProps?.listName)]];
-    return colorFromLabel;
+      : defaultColor;
+    return colorFromLabel || defaultColor;
   };
 
   return (
@@ -155,8 +157,7 @@ function Events({ events, resourceId, initialView, tasks }) {
                     </span>
                   ))}
                 </span>
-                {JSON.stringify(tasks)}
-                <Tasks items={tasks(event.id)} noProgress />
+                <Tasks items={tasks(event.id) || []} noProgress />
                 <div className="description">{getDescription(event.description)}</div>
                 <div className="circle" />
               </Link>
@@ -360,6 +361,7 @@ const Board = React.memo(
   ({
     listIds,
     isCardModalOpened,
+    isCurrentUserManager,
     canEdit,
     onListCreate,
     onListMove,
@@ -435,10 +437,6 @@ const Board = React.memo(
     useEffect(() => {
       setEvents3(mapEvents3(events2));
     }, [events2]);
-
-    useEffect(() => {
-      setCalendarEvents(events3);
-    }, [events3]);
 
     const handleAddListClick = useCallback(() => {
       setIsListAddOpened(true);
@@ -778,6 +776,11 @@ const Board = React.memo(
       // }
     };
 
+    useEffect(() => {
+      // setCalendarEvents(events3);
+      insertEmptyEvent(new Date(initialDate));
+    }, [events3]); // eslint-disable-line
+
     const onChangeDate = (e) => {
       const eee = new Date(e.getTime());
       eee.setUTCHours(0);
@@ -808,6 +811,13 @@ const Board = React.memo(
       }, 150);
       onChangeView(initialView);
     }, []); // eslint-disable-line
+
+    const onCardCreateIfAllowed = (...params) => {
+      if (isCurrentUserManager) {
+        return onCardCreate(...params);
+      }
+      return () => {};
+    };
 
     return viewCalendar ? (
       <>
@@ -897,7 +907,7 @@ const Board = React.memo(
                     ...props,
                     tasks: selectTasks,
                     getListByName,
-                    onCardCreate,
+                    onCardCreate: onCardCreateIfAllowed,
                     onCardUpdate,
                     initialView,
                   }),
@@ -906,7 +916,7 @@ const Board = React.memo(
                     ...props,
                     tasks: selectTasks,
                     getListByName,
-                    onCardCreate,
+                    onCardCreate: onCardCreateIfAllowed,
                     onCardUpdate,
                     initialView,
                   }),
@@ -917,7 +927,7 @@ const Board = React.memo(
                     ...props,
                     tasks: selectTasks,
                     getListByName,
-                    onCardCreate,
+                    onCardCreate: onCardCreateIfAllowed,
                     onCardUpdate,
                     initialView,
                   }),
@@ -928,7 +938,7 @@ const Board = React.memo(
                     ...props,
                     tasks: selectTasks,
                     getListByName,
-                    onCardCreate,
+                    onCardCreate: onCardCreateIfAllowed,
                     onCardUpdate,
                     initialView,
                   }),
@@ -963,7 +973,7 @@ const Board = React.memo(
                       <ListContainer key={listId} id={listId} index={index} />
                     ))}
                     {placeholder}
-                    {canEdit && (
+                    {canEdit && isCurrentUserManager && (
                       <div data-drag-scroller className={styles.list}>
                         {isListAddOpened ? (
                           <ListAdd onCreate={onListCreate} onClose={handleAddListClose} />
@@ -998,6 +1008,7 @@ const Board = React.memo(
 Board.propTypes = {
   listIds: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
   isCardModalOpened: PropTypes.bool.isRequired,
+  isCurrentUserManager: PropTypes.bool.isRequired,
   canEdit: PropTypes.bool.isRequired,
   onListCreate: PropTypes.func.isRequired,
   onListMove: PropTypes.func.isRequired,

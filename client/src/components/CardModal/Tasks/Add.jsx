@@ -135,6 +135,7 @@ const Add = React.forwardRef(({ children, onCreate, options, optionsId }, ref) =
         onBlur={handleFieldBlur}
         search
         options={options}
+        className="tasks-dropdown"
       />
 
       <div className={styles.controls}>

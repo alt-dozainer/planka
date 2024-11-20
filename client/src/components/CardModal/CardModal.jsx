@@ -256,6 +256,14 @@ const CardModal = React.memo(
       }
     };
 
+    const descriptionFieldRef = useRef(null);
+
+    const onNameFieldBlur = (e) => {
+      descriptionFieldRef.current?.firstField.current.focus();
+      e.nativeEvent.stopPropagation();
+      return false;
+    };
+
     const contentNode = (
       <Grid className={styles.grid}>
         <Grid.Row className={styles.headerPadding}>
@@ -264,7 +272,11 @@ const CardModal = React.memo(
               <Icon name="list alternate outline" className={styles.moduleIcon} />
               <div className={styles.headerTitleWrapper}>
                 {canEdit ? (
-                  <NameField defaultValue={name} onUpdate={handleNameUpdate} />
+                  <NameField
+                    defaultValue={name}
+                    onUpdate={handleNameUpdate}
+                    onBlur={onNameFieldBlur}
+                  />
                 ) : (
                   <div className={styles.headerTitle}>{name}</div>
                 )}
@@ -443,6 +455,7 @@ const CardModal = React.memo(
                       defaultValue={description}
                       onUpdate={handleDescriptionUpdate}
                       isCurrentUserManager={canEditAllCommentActivities}
+                      ref={descriptionFieldRef}
                     >
                       {getDescription() ? (
                         <button

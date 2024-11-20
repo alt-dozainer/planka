@@ -17,12 +17,14 @@ const mapStateToProps = (state) => {
   const allLabels = selectors.selectLabelsForCurrentBoard(state);
   const filterText = selectors.selectFilterTextForCurrentBoard(state);
 
+  const isCurrentUserManager = selectors.selectIsCurrentUserManagerForCurrentProject(state);
   const isCurrentUserEditor =
     !!currentUserMembership && currentUserMembership.role === BoardMembershipRoles.EDITOR;
 
   return {
     listIds,
     isCardModalOpened: !!cardId,
+    isCurrentUserManager,
     canEdit: isCurrentUserEditor,
     events,
     getListByName: selectListById,
