@@ -15,7 +15,7 @@ const NameField = React.memo(({ defaultValue, onUpdate, onBlur }) => {
   const { t } = useTranslation();
   const prevDefaultValue = usePrevious(defaultValue);
   const currentValue = useRef(defaultValue);
-  const [value, handleChange, setValue] = useField(defaultValue);
+  const [value, , setValue] = useField(defaultValue);
   const [options, setOptions] = useState([{ text: defaultValue, value: defaultValue }]);
 
   const nameField = useRef();
