@@ -652,7 +652,14 @@ const CardModal = React.memo(
     );
 
     return (
-      <Modal open closeIcon centered={false} onClose={handleClose} className={styles.wrapper}>
+      <Modal
+        closeOnEscape={false}
+        open
+        closeIcon
+        centered={false}
+        onClose={handleClose}
+        className={styles.wrapper}
+      >
         {canEdit ? (
           <AttachmentAddZone onCreate={onAttachmentCreate}>{contentNode}</AttachmentAddZone>
         ) : (

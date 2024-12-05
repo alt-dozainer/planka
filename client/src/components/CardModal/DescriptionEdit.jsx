@@ -17,6 +17,22 @@ const DescriptionEdit = React.forwardRef(
     const secondField = useRef(null);
     const editorRef = useRef(null);
 
+    // const showToolbar = () => {
+    //   let toolbar = editorRef.current;
+    //   toolbar = toolbar.querySelector('.editor-toolbar');
+    //   if (toolbar) {
+    //     toolbar.style.display = 'block';
+    //   }
+    // };
+
+    // const hideToolbar = () => {
+    //   let toolbar = editorRef.current;
+    //   toolbar = toolbar.querySelector('.editor-toolbar');
+    //   if (toolbar) {
+    //     toolbar.style.display = 'none';
+    //   }
+    // };
+
     const open = useCallback(() => {
       setIsOpened(true);
       setValue(defaultValue || '');
@@ -29,7 +45,7 @@ const DescriptionEdit = React.forwardRef(
         onUpdate(cleanValue);
       }
 
-      setIsOpened(false);
+      // setIsOpened(false);
       setValue(null);
     }, [defaultValue, onUpdate, value, setValue]);
 
@@ -196,6 +212,7 @@ const DescriptionEdit = React.forwardRef(
                 onChange={(v) => setJSON(v, 'carMake')}
               />
             </div> */}
+
             <Label pointing="below">Observații</Label>
           </>
         )}
@@ -208,6 +225,8 @@ const DescriptionEdit = React.forwardRef(
           onChange={(v) => setJSON(v, 'description')}
           tabIndex={3} // eslint-disable-line
           ref={editorRef}
+          // onFocus={showToolbar}
+          // onBlur={hideToolbar}
         />
         <div className={styles.controls}>
           <Button positive content={t('action.save')} />

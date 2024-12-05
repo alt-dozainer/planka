@@ -75,6 +75,14 @@ const NameEdit = React.forwardRef(
       return children;
     }
 
+    const resetValue = () => {
+      handleFieldChange(undefined, {
+        name: 'name',
+        value: defaultValue,
+      });
+      close();
+    };
+
     const getValue = options.find((i) => i.text === value)?.value;
 
     return (
@@ -115,7 +123,7 @@ const NameEdit = React.forwardRef(
         />
         <div className={styles.controls}>
           <Button positive content={t('action.save')} />
-          <Button onClick={() => close()}>
+          <Button onClick={() => resetValue()}>
             <Icon fitted name="times" size="small" />
           </Button>
         </div>

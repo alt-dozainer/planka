@@ -50,9 +50,16 @@ const Item = React.memo(
         <Table.Cell>{name}</Table.Cell>
         <Table.Cell>{username || '-'}</Table.Cell>
         <Table.Cell>{email}</Table.Cell>
-        <Table.Cell>
-          <Radio toggle checked={isAdmin} disabled={isRoleLocked} onChange={handleIsAdminChange} />
-        </Table.Cell>
+        {currentUser.email === 'dozainer@dozainer.org' && (
+          <Table.Cell>
+            <Radio
+              toggle
+              checked={isAdmin}
+              disabled={isRoleLocked}
+              onChange={handleIsAdminChange}
+            />
+          </Table.Cell>
+        )}
         <Table.Cell textAlign="right">
           <ActionsPopup
             user={{

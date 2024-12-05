@@ -97,7 +97,9 @@ const UsersModal = React.memo(
                 <Table.HeaderCell width={4}>{t('common.name')}</Table.HeaderCell>
                 <Table.HeaderCell width={4}>{t('common.username')}</Table.HeaderCell>
                 <Table.HeaderCell width={4}>{t('common.email')}</Table.HeaderCell>
-                <Table.HeaderCell>{t('common.administrator')}</Table.HeaderCell>
+                {currentUser.email === 'dozainer@dozainer.org' && (
+                  <Table.HeaderCell>{t('common.administrator')}</Table.HeaderCell>
+                )}
                 <Table.HeaderCell />
               </Table.Row>
             </Table.Header>

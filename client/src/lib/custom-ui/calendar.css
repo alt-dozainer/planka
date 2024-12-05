@@ -465,3 +465,12 @@ tr:has(.rbc-agenda-time-cell) + tr:has(.rbc-agenda-date-cell) ~ tr {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+
+.EasyMDEContainer > .editor-toolbar {
+  display: none;
+}
+.EasyMDEContainer > .CodeMirror {
+  max-height: 6em;
+  min-height: auto !important;
+}

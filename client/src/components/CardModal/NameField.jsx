@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 // import TextareaAutosize from 'react-textarea-autosize';
@@ -15,7 +15,7 @@ const NameField = React.memo(({ defaultValue, onUpdate, onBlur }) => {
   const { t } = useTranslation();
   const prevDefaultValue = usePrevious(defaultValue);
   const currentValue = useRef(defaultValue);
-  const [value, /* handleChange, */ setValue] = useField(defaultValue);
+  const [value, handleChange, setValue] = useField(defaultValue);
   const [options, setOptions] = useState([{ text: defaultValue, value: defaultValue }]);
 
   const nameField = useRef();
@@ -23,6 +23,12 @@ const NameField = React.memo(({ defaultValue, onUpdate, onBlur }) => {
   const isFocused = useRef(false);
 
   const scheduled = t('scheduled');
+
+  useEffect(() => {
+    if (value === scheduled) {
+      nameField.current.searchRef.current.focus();
+    }
+  }, []); // eslint-disable-line
 
   // const handleFocus = useCallback(
   //   (e) => {
@@ -129,6 +135,7 @@ const NameField = React.memo(({ defaultValue, onUpdate, onBlur }) => {
           if (!val) {
             setOptions([{ text: o.value, value: o.value }]);
           }
+          onUpdate(val || o.value);
         }}
         // onChange={handleChange}
         onBlur={handleBlur}

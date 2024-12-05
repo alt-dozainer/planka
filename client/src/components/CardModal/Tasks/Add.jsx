@@ -20,6 +20,7 @@ const Add = React.forwardRef(({ children, onCreate, options, optionsId }, ref) =
   const [focusNameFieldState, focusNameField] = useToggle();
 
   const nameField = useRef(null);
+  const submitButtonRef = useRef(null);
 
   const open = useCallback(() => {
     setIsOpened(true);
@@ -83,6 +84,7 @@ const Add = React.forwardRef(({ children, onCreate, options, optionsId }, ref) =
   useEffect(() => {
     if (isOpened) {
       // nameField.current.ref.current.focus();
+      nameField.current.searchRef.current.focus();
     }
   }, [isOpened]);
 
@@ -126,12 +128,16 @@ const Add = React.forwardRef(({ children, onCreate, options, optionsId }, ref) =
         selection
         allowAdditions
         additionLabel=""
-        onChange={(e, o) =>
+        onChange={(e, o) => {
           handleFieldChange(e, {
             name: 'name',
             value: o.options.find((i) => i.value === o.value)?.text || o.value,
-          })
-        }
+          });
+          // handleSubmit();
+          setTimeout(() => {
+            submitButtonRef.current?.ref?.current?.click();
+          }, 100);
+        }}
         onBlur={handleFieldBlur}
         search
         options={options}
@@ -145,6 +151,7 @@ const Add = React.forwardRef(({ children, onCreate, options, optionsId }, ref) =
           content={t('action.addTask')}
           onMouseOver={handleControlMouseOver}
           onMouseOut={handleControlMouseOut}
+          ref={submitButtonRef}
         />
       </div>
     </Form>
