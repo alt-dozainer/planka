@@ -42,31 +42,19 @@ jobs:
       with:
         name: build
         path: ./client/build
-
-    # Step 1: Deploy build files via rsync (with cleanup)
-    - name: Deploy Planka build files
-      uses: appleboy/rsync-action@v0.1.9
+    - uses: denis-gr/ssh-scp-ssh-pipelines@latest
       with:
         host: ${{ secrets.HOST }}
         port: 7822
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        source: "client/build/"
-        target: "/var/www/planka/public/"
-        flags: "-avz --delete"   # archive mode, compress, delete old files
-        rsync_path: "mkdir -p /var/www/planka/public && rsync"  # ensures folder exists
-
-    # Step 2: Finalize deployment and restart service
-    - name: Finalize deployment and restart Planka
-      uses: appleboy/ssh-action@v0.1.9
-      with:
-        host: ${{ secrets.HOST }}
-        port: 7822
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        script_stop: true
-        script: |
-          cp /var/www/planka/public/index*.html /var/www/planka/views/
+        user: ${{ secrets.USERNAME }}
+        pass: ${{ secrets.PASSWORD }}
+        first_ssh: |
+          rm -rf /var/www/planka/public/static/js
+          rm -rf /var/www/planka/plublc/static/css
+        scp: |
+          './client/build/*' => /var/www/planka/public/
+          './client/build/index*.html' => /var/www/planka/views/
+        last_ssh: |
           cd /var/www/planka/views/
           cp index.html index.ejs
           rm index.html
