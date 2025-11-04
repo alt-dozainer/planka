@@ -64,7 +64,7 @@ jobs:
         port: 7822
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
-        source: "./client/build/*"
+        source: "./client/build/."
         target: "/var/www/planka/public/"
 
     # Step 3: Finalize deployment
