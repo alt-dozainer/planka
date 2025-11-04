@@ -2,6 +2,7 @@ import React, { useCallback, useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { useReactToPrint } from 'react-to-print';
 import { Button, Checkbox, Grid, Icon, Modal } from 'semantic-ui-react';
 import { usePopup } from '../../lib/popup';
 import { Markdown } from '../../lib/custom-ui';
@@ -24,6 +25,8 @@ import DueDateEditStep from '../DueDateEditStep';
 import StopwatchEditStep from '../StopwatchEditStep';
 import CardMoveStep from '../CardMoveStep';
 import DeleteStep from '../DeleteStep';
+
+import Print from './Print';
 
 import styles from './CardModal.module.scss';
 
@@ -84,10 +87,15 @@ const CardModal = React.memo(
     getBoardByName,
     // getCardsFromBoardByName,
     fetchBoard,
+    project,
   }) => {
     const [t] = useTranslation();
     const [isLinkCopied, setIsLinkCopied] = useState(false);
     const [taskOptions, setTaskOptions] = useState([]);
+    const [printPreview, setPrinPreview] = useState(false);
+
+    const printCardRef = useRef(null);
+    const descriptionFieldRef = useRef(null);
 
     const isGalleryOpened = useRef(false);
 
@@ -196,6 +204,10 @@ const CardModal = React.memo(
       onClose();
     }, [onClose]);
 
+    const handlePrint = useReactToPrint({
+      contentRef: printCardRef,
+    });
+
     const AttachmentAddPopup = usePopup(AttachmentAddStep);
     const BoardMembershipsPopup = usePopup(BoardMembershipsStep);
     const LabelsPopup = usePopup(LabelsStep);
@@ -255,8 +267,6 @@ const CardModal = React.memo(
         });
       }
     };
-
-    const descriptionFieldRef = useRef(null);
 
     const onNameFieldBlur = (e) => {
       descriptionFieldRef.current?.firstField.current.focus();
@@ -591,6 +601,19 @@ const CardModal = React.memo(
                 <Button
                   fluid
                   className={styles.actionButton}
+                  onClick={() => {
+                    setPrinPreview(true);
+                    setTimeout(() => {
+                      handlePrint();
+                    }, 100);
+                  }}
+                >
+                  <Icon name="print" className={styles.actionIcon} />
+                  {t('action.invoice')}
+                </Button>
+                <Button
+                  fluid
+                  className={styles.actionButton}
                   onClick={handleToggleSubscriptionClick}
                 >
                   <Icon name="paper plane outline" className={styles.actionIcon} />
@@ -660,10 +683,41 @@ const CardModal = React.memo(
         onClose={handleClose}
         className={styles.wrapper}
       >
-        {canEdit ? (
-          <AttachmentAddZone onCreate={onAttachmentCreate}>{contentNode}</AttachmentAddZone>
+        {!printPreview ? ( // eslint-disable-line
+          canEdit ? (
+            <AttachmentAddZone onCreate={onAttachmentCreate}>{contentNode}</AttachmentAddZone>
+          ) : (
+            contentNode
+          )
         ) : (
-          contentNode
+          <Print
+            hideDescription={!getDescription()}
+            ref={printCardRef}
+            name={name}
+            project={project}
+            header={
+              <DescriptionEdit
+                defaultValue={description}
+                isCurrentUserManager={canEditAllCommentActivities}
+              >
+                -
+              </DescriptionEdit>
+            }
+            count={tasks.length}
+            items={
+              <Tasks
+                items={tasks}
+                options={taskOptions}
+                optionsId={taskOptionsBoardId}
+                canEdit={false}
+                onCreate={onTaskCreate}
+                onUpdate={onTaskUpdateAndComment}
+                onMove={onTaskMove}
+                onDelete={onTaskDelete}
+                isCurrentUserManager={canEditAllCommentActivities}
+              />
+            }
+          />
         )}
       </Modal>
     );
@@ -728,6 +782,7 @@ CardModal.propTypes = {
   getBoardByName: PropTypes.func,
   // getCardsFromBoardByName: PropTypes.func,
   fetchBoard: PropTypes.func,
+  project: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 CardModal.defaultProps = {
@@ -739,6 +794,7 @@ CardModal.defaultProps = {
   getBoardByName: () => undefined,
   // getCardsFromBoardByName: () => undefined,
   fetchBoard: () => undefined,
+  project: undefined,
 };
 
 export default CardModal;

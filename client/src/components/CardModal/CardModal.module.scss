@@ -218,6 +218,10 @@
       padding-left: 16px;
       width: 100% !important;
     }
+
+    @media print {
+      display: none;
+    }
   }
 
   .text {

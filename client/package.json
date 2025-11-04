@@ -101,6 +101,7 @@
     "react-scripts": "5.0.1",
     "react-simplemde-editor": "^5.2.0",
     "react-textarea-autosize": "^8.5.3",
+    "react-to-print": "3.0.4",
     "redux": "^4.2.1",
     "redux-logger": "^3.0.6",
     "redux-orm": "^0.16.2",

@@ -244,6 +244,8 @@ export default {
       unsubscribe: 'Dezabonați-vă',
       uploadNewAvatar: 'Încărcați un avatar nou',
       uploadNewImage: 'Încărcați o nouă imagine',
+      invoice: 'Facturează',
+      print: 'Listează',
     },
 
     scheduled: 'Programat',

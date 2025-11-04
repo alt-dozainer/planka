@@ -435,6 +435,11 @@ tr:has(.rbc-agenda-time-cell) + tr:has(.rbc-agenda-date-cell) ~ tr {
 
 .rbc-time-view .rbc-events-container > .rbc-event .events .rbc-event {
   margin-left: 2px;
+  border-radius: 0;
+}
+
+.rbc-time-view .rbc-events-container > .rbc-event[role="button"] {
+  width: 100% !important;
 }
 
 
@@ -473,4 +478,83 @@ tr:has(.rbc-agenda-time-cell) + tr:has(.rbc-agenda-date-cell) ~ tr {
 .EasyMDEContainer > .CodeMirror {
   max-height: 6em;
   min-height: auto !important;
+}
+
+
+/* invoice printing  */
+
+hr {
+  outline: none;
+  height: 1px;
+  border: 0;
+  background-color: #ddd;
+}
+
+.print-card {
+  padding: 1em;
+
+  [class^="Tasks_progressWrapper"],
+  [class^="Tasks_count"],
+  [class^="Item_checkboxWrapper"],
+  [class^="Item_button"],
+  .ui.button:not(.show)
+  {
+    display: none !important;
+  }
+  textarea {
+    padding: 0.35em !important;
+    max-height: 2em !important;
+    border: 0 !important;
+  }
+  .hide-description {
+    .ui.pointing.below.label {
+      display: none;
+    }
+    div[class^="DescriptionEdit"] {
+      display: none !important;
+    }
+  }
+}
+
+@media print {
+  .print-card {
+    background: #fff;
+    padding: 0.1cm;
+
+    .task-description {
+      input {
+        border: none !important;
+        background: none !important;
+      }
+    }
+    .tasks-footer {
+      clear: both;
+      display: block;
+      margin-top: 1em;
+      color: #000;
+      text-align: left;
+      padding: 0;
+
+      .total-value {
+        float: right;
+      }
+    }
+    [class^="Item_task"]
+    {
+      line-height: 2.2em;
+      clear: both;
+      display: block;
+      border-bottom: 1px solid #ddd;
+    }
+  }
+  #root {
+    display: none;
+  }
+  @page {
+    margin: 0.5cm;
+/*    border: 0.5mm solid #ddd;*/
+  }
+  @page :first {
+/*    margin: -1in -1in -1in -1in;*/
+  }
 }

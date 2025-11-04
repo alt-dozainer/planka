@@ -21,6 +21,7 @@ const mapStateToProps = (state) => {
   const selectListById = (name) => selectors.selectListByNameForCurrentBoard(state, name);
   const selectBoardByName = (name) => selectors.selectBoardByName(state, name);
   const selectCardsFromBoardByName = (name) => selectors.selectCardsFromBoardByName(state, name);
+  const currentProject = selectors.selectCurrentProject(state);
 
   const accessToken = selectors.selectAccessToken(state);
   const headers = {
@@ -86,6 +87,7 @@ const mapStateToProps = (state) => {
     getBoardByName: selectBoardByName,
     getCardsFromBoardByName: selectCardsFromBoardByName,
     fetchBoard,
+    project: currentProject,
   };
 };
 

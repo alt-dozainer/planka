@@ -216,7 +216,16 @@ function EventAgenda({ event: ev, getListByName, onCardCreate, onCardUpdate, ini
             {resource.resourceTitle}
           </div>
         ))}
-        <Events
+        {resourceMap.map((resource) => (
+          <Events
+            events={ev.events || []}
+            resourceId={resource.resourceId}
+            getListByName={getListByName}
+            initialView={initialView}
+            tasks={tasks}
+          />
+        ))}
+        {/* <Events
           events={ev.events || []}
           resourceId={1}
           getListByName={getListByName}
@@ -236,7 +245,7 @@ function EventAgenda({ event: ev, getListByName, onCardCreate, onCardUpdate, ini
           getListByName={getListByName}
           initialView={initialView}
           tasks={tasks}
-        />
+        /> */}
       </React.Fragment>
     </div>
   );
@@ -300,11 +309,11 @@ const mapEvents2 = (events) =>
 
     return {
       resourceId:
-        resourceId ||
-        resourceMap.find(
-          (resource) =>
-            event.labels?.[(event.labels?.length || 1) - 1]?.name === resource.resourceTitle,
+        resourceMap.find((resource) =>
+          // event.labels?.[(event.labels?.length || 1) - 1]?.name === resource.resourceTitle,
+          event.labels?.find((label) => label.name === resource.resourceTitle),
         )?.resourceId ||
+        resourceId ||
         1,
       id: event.id,
       title: event.name,
@@ -428,7 +437,8 @@ const Board = React.memo(
         mapEvents2(
           events.filter(
             (event) =>
-              event.name.indexOf(filterText) >= 0 || event.description?.indexOf(filterText) >= 0,
+              event.name.toLocaleLowerCase().indexOf(filterText.toLocaleLowerCase()) >= 0 ||
+              event.description?.toLocaleLowerCase().indexOf(filterText.toLocaleLowerCase()) >= 0,
           ),
         ),
       );

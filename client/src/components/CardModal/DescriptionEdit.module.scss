@@ -2,6 +2,10 @@
   .controls {
     clear: both;
     margin-top: 6px;
+
+    @media print {
+      display: none;
+    }
   }
 
   .field {
