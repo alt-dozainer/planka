@@ -32,7 +32,7 @@ jobs:
         with:
           name: build
           path: ./client/build
-        
+
   publish:
     needs: build
     runs-on: ubuntu-latest
@@ -42,21 +42,28 @@ jobs:
       with:
         name: build
         path: ./client/build
-    - uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+    - uses: appleboy/ssh-action@v0.1.9
       with:
         host: ${{ secrets.HOST }}
         port: 7822
-        user: ${{ secrets.USERNAME }}
-        pass: ${{ secrets.PASSWORD }}
-        first_ssh: |
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        # or use 'key: ${{ secrets.SSH_KEY }}' if you prefer key-based auth
+        script_stop: true
+        source: "./client/build/*"
+        target: "/var/www/planka/public/"
+        script: |
+          # Cleanup old static files
           rm -rf /var/www/planka/public/static/js
-          rm -rf /var/www/planka/plublc/static/css
-        scp: |
-          './client/build/*' => /var/www/planka/public/
-          './client/build/index*.html' => /var/www/planka/views/
-        last_ssh: |
+          rm -rf /var/www/planka/public/static/css
+
+          # Move index.html to views folder
+          cp /var/www/planka/public/index*.html /var/www/planka/views/
+
+          # Convert to EJS template
           cd /var/www/planka/views/
           cp index.html index.ejs
           rm index.html
+
+          # Restart Planka service
           sudo yunohost service restart planka
-          
