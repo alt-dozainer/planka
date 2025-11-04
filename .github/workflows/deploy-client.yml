@@ -42,28 +42,43 @@ jobs:
       with:
         name: build
         path: ./client/build
-    - uses: appleboy/ssh-action@v0.1.9
+
+    # Step 1: Cleanup old files on the server
+    - name: Cleanup old files
+      uses: appleboy/ssh-action@v0.1.9
       with:
         host: ${{ secrets.HOST }}
         port: 7822
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
-        # or use 'key: ${{ secrets.SSH_KEY }}' if you prefer key-based auth
         script_stop: true
-        source: "./client/build/*"
-        target: "/var/www/planka/public/"
         script: |
-          # Cleanup old static files
           rm -rf /var/www/planka/public/static/js
           rm -rf /var/www/planka/public/static/css
 
-          # Move index.html to views folder
-          cp /var/www/planka/public/index*.html /var/www/planka/views/
+    # Step 2: Upload new build files
+    - name: Upload Planka build files
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.HOST }}
+        port: 7822
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        source: "./client/build/*"
+        target: "/var/www/planka/public/"
 
-          # Convert to EJS template
+    # Step 3: Finalize deployment
+    - name: Finalize deployment and restart service
+      uses: appleboy/ssh-action@v0.1.9
+      with:
+        host: ${{ secrets.HOST }}
+        port: 7822
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        script_stop: true
+        script: |
+          cp /var/www/planka/public/index*.html /var/www/planka/views/
           cd /var/www/planka/views/
           cp index.html index.ejs
           rm index.html
-
-          # Restart Planka service
           sudo yunohost service restart planka
