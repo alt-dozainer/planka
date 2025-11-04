@@ -43,32 +43,21 @@ jobs:
         name: build
         path: ./client/build
 
-    # Step 1: Cleanup old files on the server
-    - name: Cleanup old files
-      uses: appleboy/ssh-action@v0.1.9
+    # Step 1: Deploy build files via rsync (with cleanup)
+    - name: Deploy Planka build files
+      uses: appleboy/rsync-action@v0.1.9
       with:
         host: ${{ secrets.HOST }}
         port: 7822
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
-        script_stop: true
-        script: |
-          rm -rf /var/www/planka/public/static/js
-          rm -rf /var/www/planka/public/static/css
-
-    # Step 2: Upload new build files
-    - name: Upload Planka build files
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.HOST }}
-        port: 7822
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        source: "./client/build/."
+        source: "client/build/"
         target: "/var/www/planka/public/"
+        flags: "-avz --delete"   # archive mode, compress, delete old files
+        rsync_path: "mkdir -p /var/www/planka/public && rsync"  # ensures folder exists
 
-    # Step 3: Finalize deployment
-    - name: Finalize deployment and restart service
+    # Step 2: Finalize deployment and restart service
+    - name: Finalize deployment and restart Planka
       uses: appleboy/ssh-action@v0.1.9
       with:
         host: ${{ secrets.HOST }}
