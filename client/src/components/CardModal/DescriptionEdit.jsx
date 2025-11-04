@@ -8,7 +8,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import styles from './DescriptionEdit.module.scss';
 
 const DescriptionEdit = React.forwardRef(
-  ({ children, defaultValue, onUpdate, isCurrentUserManager, isOpen }, ref) => {
+  ({ children, defaultValue, onUpdate, isCurrentUserManager }, ref) => {
     const [t] = useTranslation();
     const [isOpened, setIsOpened] = useState(true);
     const [value, setValue] = useState(defaultValue);
@@ -244,13 +244,13 @@ DescriptionEdit.propTypes = {
   defaultValue: PropTypes.string,
   onUpdate: PropTypes.func.isRequired,
   isCurrentUserManager: PropTypes.bool,
-  isOpen: PropTypes.bool,
+  // isOpen: PropTypes.bool,
 };
 
 DescriptionEdit.defaultProps = {
   defaultValue: undefined,
   isCurrentUserManager: false,
-  isOpen: undefined,
+  // isOpen: undefined,
 };
 
 export default React.memo(DescriptionEdit);
