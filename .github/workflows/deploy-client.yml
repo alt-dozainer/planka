@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Deploy client
+name: Deploy client & server
 
 on:
   push:
@@ -27,21 +27,37 @@ jobs:
       - name: build client
         working-directory: ./
         run: npm run client:build
-      - name: create artifact
+      - name: create client artifact
         uses: actions/upload-artifact@v4
         with:
           name: build
           path: ./client/build
+      - name: create server artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: server
+          path: |
+            ./server/api/
+            ./server/config/
+            ./server/db/
+            ./server/app.js
+            ./server/get-config.js
+            ./server/package.json
+            ./server/package-lock.json
+            ./server/.sailsrc
 
   publish:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    # - uses: actions/checkout@v4
     - uses: actions/download-artifact@v4
       with:
         name: build
         path: ./client/build
+    - uses: actions/download-artifact@v4
+      with:
+        name: server
+        path: ./server
     - uses: denis-gr/ssh-scp-ssh-pipelines@latest
       with:
         host: ${{ secrets.HOST }}
@@ -50,12 +66,15 @@ jobs:
         pass: ${{ secrets.PASSWORD }}
         first_ssh: |
           rm -rf /var/www/planka/public/static/js
-          rm -rf /var/www/planka/plublc/static/css
+          rm -rf /var/www/planka/public/static/css
         scp: |
           './client/build/*' => /var/www/planka/public/
           './client/build/index*.html' => /var/www/planka/views/
+          './server/*' => /var/www/planka/
         last_ssh: |
           cd /var/www/planka/views/
           cp index.html index.ejs
           rm index.html
+          cd /var/www/planka
+          npm install --production
           sudo yunohost service restart planka
