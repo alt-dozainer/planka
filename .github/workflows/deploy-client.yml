@@ -32,7 +32,7 @@ jobs:
         with:
           name: build
           path: ./client/build
-        
+
   publish:
     needs: build
     runs-on: ubuntu-latest
@@ -42,7 +42,7 @@ jobs:
       with:
         name: build
         path: ./client/build
-    - uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+    - uses: denis-gr/ssh-scp-ssh-pipelines@latest
       with:
         host: ${{ secrets.HOST }}
         port: 7822
@@ -59,4 +59,3 @@ jobs:
           cp index.html index.ejs
           rm index.html
           sudo yunohost service restart planka
-          
