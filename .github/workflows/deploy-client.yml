@@ -76,5 +76,4 @@ jobs:
           cp index.html index.ejs
           rm index.html
           cd /var/www/planka
-          npm install --production
           sudo yunohost service restart planka
