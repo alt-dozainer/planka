@@ -70,4 +70,7 @@ module.exports.custom = {
 
   slackBotToken: process.env.SLACK_BOT_TOKEN,
   slackChannelId: process.env.SLACK_CHANNEL_ID,
+
+  openaiApiKey: process.env.OPENAI_API_KEY,
+  openaiModel: process.env.OPENAI_MODEL || 'gpt-4o-mini',
 };

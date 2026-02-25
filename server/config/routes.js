@@ -77,6 +77,8 @@ module.exports.routes = {
   'PATCH /api/comment-actions/:id': 'comment-actions/update',
   'DELETE /api/comment-actions/:id': 'comment-actions/delete',
 
+  'POST /api/ai/voice-command': 'ai/voice-command',
+
   'GET /api/notifications': 'notifications/index',
   'GET /api/notifications/:id': 'notifications/show',
   'PATCH /api/notifications/:ids': 'notifications/update',

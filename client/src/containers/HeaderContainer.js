@@ -11,6 +11,7 @@ const mapStateToProps = (state) => {
   const currentProject = selectors.selectCurrentProject(state);
   const notifications = selectors.selectNotificationsForCurrentUser(state);
   const isCurrentUserManager = selectors.selectIsCurrentUserManagerForCurrentProject(state);
+  const { boardId } = selectors.selectPath(state);
 
   return {
     notifications,
@@ -19,6 +20,7 @@ const mapStateToProps = (state) => {
     user: currentUser,
     canEditProject: isCurrentUserManager,
     canEditUsers: currentUser.isAdmin,
+    boardId,
   };
 };
 
@@ -30,6 +32,7 @@ const mapDispatchToProps = (dispatch) =>
       onNotificationDelete: entryActions.deleteNotification,
       onUserSettingsClick: entryActions.openUserSettingsModal,
       onLogout: entryActions.logout,
+      onVoiceCommand: entryActions.processVoiceCommand,
     },
     dispatch,
   );

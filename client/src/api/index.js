@@ -18,6 +18,7 @@ import activities from './activities';
 import commentActivities from './comment-activities';
 import notifications from './notifications';
 import vehicles from './vehicles';
+import ai from './ai';
 
 export { http, socket };
 
@@ -40,4 +41,5 @@ export default {
   ...commentActivities,
   ...notifications,
   ...vehicles,
+  ...ai,
 };

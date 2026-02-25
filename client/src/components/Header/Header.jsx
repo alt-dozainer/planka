@@ -9,6 +9,7 @@ import Paths from '../../constants/Paths';
 import Config from '../../constants/Config';
 import { ProjectBackgroundTypes } from '../../constants/Enums';
 import NotificationsStep from './NotificationsStep';
+import VoiceCommandButton from './VoiceCommandButton';
 import User from '../User';
 import UserStep from '../UserStep';
 
@@ -28,11 +29,13 @@ const Header = React.memo(
     isLogouting,
     canEditProject,
     canEditUsers,
+    boardId,
     onProjectSettingsClick,
     onUsersClick,
     onNotificationDelete,
     onUserSettingsClick,
     onLogout,
+    onVoiceCommand,
   }) => {
     const handleProjectSettingsClick = useCallback(() => {
       if (canEditProject) {
@@ -93,6 +96,11 @@ const Header = React.memo(
                 <Icon fitted name="users" />
               </Menu.Item>
             )}
+            {boardId && (
+              <Menu.Item className={classNames(styles.item, styles.itemHoverable)}>
+                <VoiceCommandButton boardId={boardId} onProcess={onVoiceCommand} />
+              </Menu.Item>
+            )}
             <NotificationsPopup items={notifications} onDelete={onNotificationDelete}>
               <Menu.Item className={classNames(styles.item, styles.itemHoverable)}>
                 <Icon fitted name="bell" />
@@ -127,15 +135,18 @@ Header.propTypes = {
   isLogouting: PropTypes.bool.isRequired,
   canEditProject: PropTypes.bool.isRequired,
   canEditUsers: PropTypes.bool.isRequired,
+  boardId: PropTypes.string,
   onProjectSettingsClick: PropTypes.func.isRequired,
   onUsersClick: PropTypes.func.isRequired,
   onNotificationDelete: PropTypes.func.isRequired,
   onUserSettingsClick: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,
+  onVoiceCommand: PropTypes.func.isRequired,
 };
 
 Header.defaultProps = {
   project: undefined,
+  boardId: undefined,
 };
 
 export default Header;
